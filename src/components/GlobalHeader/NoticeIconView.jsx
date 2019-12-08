@@ -85,6 +85,7 @@ class GlobalHeaderRight extends Component {
     });
     return groupBy(newNotices, 'type');
   };
+
   getUnreadData = noticeData => {
     const unreadMsg = {};
     Object.keys(noticeData).forEach(key => {

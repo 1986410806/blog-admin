@@ -5,6 +5,7 @@ import Link from 'umi/link';
 import { connect } from 'dva';
 import LoginComponents from './components/Login';
 import styles from './style.less';
+
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
 
 @connect(({ login, loading }) => ({
@@ -93,14 +94,6 @@ class Login extends Component {
               id: 'user-login.login.tab-login-credentials',
             })}
           >
-            {status === 'error' &&
-              loginType === 'account' &&
-              !submitting &&
-              this.renderMessage(
-                formatMessage({
-                  id: 'user-login.login.message-invalid-credentials',
-                }),
-              )}
             <UserName
               name="userName"
               placeholder={`${formatMessage({

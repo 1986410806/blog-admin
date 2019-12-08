@@ -4,6 +4,8 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import { getAuthority } from './authority';
+
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -44,6 +46,7 @@ const errorHandler = error => {
 
   return response;
 };
+
 /**
  * 配置request请求时的默认参数
  */
@@ -52,5 +55,30 @@ const request = extend({
   errorHandler,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+
 });
+
+request.interceptors.request.use(async (url, options) => {
+  const { token } = getAuthority();
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: '/application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return (
+    {
+      url,
+      options: {
+        ...options,
+        headers,
+      },
+    }
+  );
+})
+
+
 export default request;
