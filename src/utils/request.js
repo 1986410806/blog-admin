@@ -3,8 +3,10 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
+import router from 'umi/router';
 import { notification } from 'antd';
-import { getAuthority } from './authority';
+import { getUserToken } from './user_token';
+
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -29,14 +31,35 @@ const codeMessage = {
 
 const errorHandler = error => {
   const { response } = error;
-
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
+
     notification.error({
       message: `请求错误 ${status}: ${url}`,
       description: errorText,
     });
+
+    if (status === 401) {
+      // @HACK
+      /* eslint-disable no-underscore-dangle */
+      window.g_app._store.dispatch({
+        type: 'login/logout',
+      });
+      return;
+    }
+    // environment should not be used
+    if (status === 403) {
+      router.push('/exception/403');
+      return;
+    }
+    if (status <= 504 && status >= 500) {
+      router.push('/exception/500');
+      return;
+    }
+    if (status >= 404 && status < 422) {
+      router.push('/exception/404');
+    }
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
@@ -44,7 +67,7 @@ const errorHandler = error => {
     });
   }
 
-  return response;
+  // return response;
 };
 
 /**
@@ -55,18 +78,16 @@ const request = extend({
   errorHandler,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
-
 });
 
 request.interceptors.request.use(async (url, options) => {
-  const { token } = getAuthority();
+  const tokenData = getUserToken();
   const headers = {
     'Content-Type': 'application/json',
     Accept: '/application/json',
   };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  if (tokenData.hasOwnProperty('token')) {
+    headers.Authorization = `Bearer ${tokenData.token}`;
   }
 
   return (
@@ -80,5 +101,17 @@ request.interceptors.request.use(async (url, options) => {
   );
 })
 
+// 业务响应状态吗封装/
+request.use(async (ctx, next) => {
+  await next();
+
+  const { res } = ctx;
+// eslint-disable-next-line max-len
+  const { success = false, massage = '' } = res; // 假设返回结果为 : { success: false, errorCode: 'B001' }
+  if (!success) {
+    // 对异常情况做对应处理
+    notification.error(massage)
+  }
+})
 
 export default request;
