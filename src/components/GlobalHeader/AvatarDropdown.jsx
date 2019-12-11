@@ -10,10 +10,9 @@ import styles from './index.less';
 class AvatarDropdown extends React.Component {
   onMenuClick = event => {
     const { key } = event;
-
+    console.log(event)
     if (key === 'logout') {
       const { dispatch } = this.props;
-
       if (dispatch) {
         dispatch({
           type: 'login/logout',
@@ -32,7 +31,6 @@ class AvatarDropdown extends React.Component {
     } = this.props;
 
     const user = getUserToken()
-
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         {menu && (
