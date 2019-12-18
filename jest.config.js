@@ -1,5 +1,5 @@
 module.exports = {
-  testURL: 'http://localhost:8000',
+  testURL: 'http://127.0.0.1:8000',
   preset: 'jest-puppeteer',
   extraSetupFiles: ['./tests/setupTests.js'],
   globals: {

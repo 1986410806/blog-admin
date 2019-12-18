@@ -48,6 +48,7 @@ class Login extends Component {
       },
     );
   };
+
   getContext = () => {
     const { form } = this.props;
     const { tabs = [] } = this.state;

@@ -99,19 +99,28 @@ export default {
             },
             {
               path: '/welcome',
-              name: 'welcome',
+              name: '欢迎',
               icon: 'smile',
               component: './Welcome',
             },
             {
-              path: '/admin',
-              name: 'admin',
+              path: '/category',
+              name: '栏目管理',
               icon: 'crown',
-              component: './Admin',
+              component: './category',
               authority: ['admin'],
             },
             {
-              component: './404',
+              path: '/exception/403',
+              component: 'exception/403',
+            },
+            {
+              path: '/exception/404',
+              component: 'exception/404',
+            },
+            {
+              path: '/exception/500',
+              component: 'exception/500',
             },
           ],
         },
@@ -164,12 +173,15 @@ export default {
   },
   manifest: {
     basePath: '/',
-  }, // chainWebpack: webpackPlugin,
-  // proxy: {
-  //   '/server/api/': {
-  //     target: 'https://preview.pro.ant.design/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/server': '' },
-  //   },
-  // },
+  },
+  // chainWebpack: webpackPlugin,
+  proxy: {
+    '/api/': {
+      target: 'http://127.0.0.1:8081/admin/v1/',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api': '',
+      },
+    },
+  },
 };

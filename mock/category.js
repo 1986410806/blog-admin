@@ -1,5 +1,5 @@
 export default {
-  'GET /admin/v1/category/list': {
+  'GET /api/category/list': {
     errorCode: 0,
     message: '',
     data: {

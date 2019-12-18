@@ -21,6 +21,7 @@
     "prettier": "prettier -c --write \"**/*\"",
     "start": "umi dev",
     "start:no-mock": "cross-env MOCK=none umi dev",
+    "start:no-mock:no-ui": "cross-env MOCK=none UMI_UI=none umi dev",
     "start:no-ui": "cross-env UMI_UI=none umi dev",
     "test": "umi test",
     "test:all": "node ./tests/run-tests.js",
@@ -48,6 +49,7 @@
   ],
   "dependencies": {
     "@ant-design/pro-layout": "^4.8.7",
+    "@ant-design/pro-table": "^1.0.14",
     "@antv/data-set": "^0.10.2",
     "antd": "^3.23.6",
     "classnames": "^2.2.6",

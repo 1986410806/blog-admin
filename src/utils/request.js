@@ -6,6 +6,7 @@ import { extend } from 'umi-request';
 import router from 'umi/router';
 import { notification } from 'antd';
 import { getUserToken } from './user_token';
+import { stringify } from 'qs';
 
 
 const codeMessage = {
@@ -83,9 +84,13 @@ const request = extend({
 request.interceptors.request.use(async (url, options) => {
   const tokenData = getUserToken();
   const headers = {
-    'Content-Type': 'application/json',
-    Accept: '/application/json',
+    Accept: 'application/json',
   };
+  if (options.data) {
+    // 设置格式
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    options.data = stringify(options.data)
+  }
   if (tokenData.hasOwnProperty('token')) {
     headers.Authorization = `Bearer ${tokenData.token}`;
   }
@@ -98,7 +103,8 @@ request.interceptors.request.use(async (url, options) => {
         headers,
       },
     }
-  );
+  )
+    ;
 })
 
 // 业务响应状态吗封装/
@@ -107,10 +113,11 @@ request.use(async (ctx, next) => {
 
   const { res } = ctx;
 // eslint-disable-next-line max-len
-  const { success = false, massage = '' } = res; // 假设返回结果为 : { success: false, errorCode: 'B001' }
+  const { success = false, massage } = res; // 假设返回结果为 : { success: false, errorCode: 'B001' }
   if (!success) {
+    console.log(message)
     // 对异常情况做对应处理
-    notification.error(massage)
+    notification.error(message)
   }
 })
 
