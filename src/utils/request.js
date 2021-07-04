@@ -1,13 +1,8 @@
-/**
- * request 网络请求工具
- * 更详细的 api 文档: https://github.com/umijs/umi-request
- */
-import { extend } from 'umi-request';
-import router from 'umi/router';
+import fetch from 'dva/fetch';
 import { notification } from 'antd';
-import { getUserToken } from './user_token';
-import { stringify } from 'qs';
-
+import router from 'umi/router';
+import hash from 'hash.js';
+import { isAntdPro } from './utils';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -26,99 +21,136 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
-/**
- * 异常处理程序
- */
 
-const errorHandler = error => {
-  const { response } = error;
-  if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
-
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
-
-    if (status === 401) {
-      // @HACK
-      /* eslint-disable no-underscore-dangle */
-      window.g_app._store.dispatch({
-        type: 'login/logout',
-      });
-      return;
-    }
-    // environment should not be used
-    if (status === 403) {
-      router.push('/exception/403');
-      return;
-    }
-    if (status <= 504 && status >= 500) {
-      router.push('/exception/500');
-      return;
-    }
-    if (status >= 404 && status < 422) {
-      router.push('/exception/404');
-    }
-  } else if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
+const checkStatus = response => {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
   }
+  const errortext = codeMessage[response.status] || response.statusText;
+  notification.error({
+    message: `请求错误 ${response.status}: ${response.url}`,
+    description: errortext,
+  });
+  const error = new Error(errortext);
+  error.name = response.status;
+  error.response = response;
+  throw error;
+};
 
-  // return response;
+const cachedSave = (response, hashcode) => {
+  /**
+   * Clone a response data and store it in sessionStorage
+   * Does not support data other than json, Cache only json
+   */
+  const contentType = response.headers.get('Content-Type');
+  if (contentType && contentType.match(/application\/json/i)) {
+    // All data is saved as text
+    response
+      .clone()
+      .text()
+      .then(content => {
+        sessionStorage.setItem(hashcode, content);
+        sessionStorage.setItem(`${hashcode}:timestamp`, Date.now());
+      });
+  }
+  return response;
 };
 
 /**
- * 配置request请求时的默认参数
+ * Requests a URL, returning a promise.
+ *
+ * @param  {string} url       The URL we want to request
+ * @param  {object} [options] The options we want to pass to "fetch"
+ * @return {object}           An object containing either "data" or "err"
  */
+export default function request(
+  url,
+  options = {
+    expirys: isAntdPro(),
+  }
+) {
+  /**
+   * Produce fingerprints based on url and parameters
+   * Maybe url has the same parameters
+   */
+  const fingerprint = url + (options.body ? JSON.stringify(options.body) : '');
+  const hashcode = hash
+    .sha256()
+    .update(fingerprint)
+    .digest('hex');
 
-const request = extend({
-  errorHandler,
-  // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
-});
-
-request.interceptors.request.use(async (url, options) => {
-  const tokenData = getUserToken();
-  const headers = {
-    Accept: 'application/json',
+  const defaultOptions = {
+    credentials: 'include',
   };
-  if (options.data) {
-    // 设置格式
-    headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    options.data = stringify(options.data)
-  }
-  if (tokenData.hasOwnProperty('token')) {
-    headers.Authorization = `Bearer ${tokenData.token}`;
-  }
-
-  return (
-    {
-      url,
-      options: {
-        ...options,
-        headers,
-      },
+  const newOptions = { ...defaultOptions, ...options };
+  if (
+    newOptions.method === 'POST' ||
+    newOptions.method === 'PUT' ||
+    newOptions.method === 'DELETE'
+  ) {
+    if (!(newOptions.body instanceof FormData)) {
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        ...newOptions.headers,
+      };
+      newOptions.body = JSON.stringify(newOptions.body);
+    } else {
+      // newOptions.body is FormData
+      newOptions.headers = {
+        Accept: 'application/json',
+        ...newOptions.headers,
+      };
     }
-  )
-    ;
-})
-
-// 业务响应状态吗封装/
-request.use(async (ctx, next) => {
-  await next();
-
-  const { res } = ctx;
-// eslint-disable-next-line max-len
-  const { success = false, massage } = res; // 假设返回结果为 : { success: false, errorCode: 'B001' }
-  if (!success) {
-    console.log(message)
-    // 对异常情况做对应处理
-    notification.error(message)
   }
-})
 
-export default request;
+  const expirys = options.expirys || 60;
+  // options.expirys !== false, return the cache,
+  if (options.expirys !== false) {
+    const cached = sessionStorage.getItem(hashcode);
+    const whenCached = sessionStorage.getItem(`${hashcode}:timestamp`);
+    if (cached !== null && whenCached !== null) {
+      const age = (Date.now() - whenCached) / 1000;
+      if (age < expirys) {
+        const response = new Response(new Blob([cached]));
+        return response.json();
+      }
+      sessionStorage.removeItem(hashcode);
+      sessionStorage.removeItem(`${hashcode}:timestamp`);
+    }
+  }
+  return fetch(url, newOptions)
+    .then(checkStatus)
+    .then(response => cachedSave(response, hashcode))
+    .then(response => {
+      // DELETE and 204 do not return data by default
+      // using .json will report an error.
+      if (newOptions.method === 'DELETE' || response.status === 204) {
+        return response.text();
+      }
+      return response.json();
+    })
+    .catch(e => {
+      const status = e.name;
+      if (status === 401) {
+        // @HACK
+        /* eslint-disable no-underscore-dangle */
+        window.g_app._store.dispatch({
+          type: 'login/logout',
+        });
+        return;
+      }
+      // environment should not be used
+      if (status === 403) {
+        router.push('/exception/403');
+        return;
+      }
+      if (status <= 504 && status >= 500) {
+        router.push('/exception/500');
+        return;
+      }
+      if (status >= 404 && status < 422) {
+        router.push('/exception/404');
+      }
+    });
+}

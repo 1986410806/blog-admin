@@ -1,65 +1,56 @@
-import { create, list, update, del } from '../services/category';
+import { queryCategory, addCategory, delCategory } from '@/services/api';
 
-const CategoryModel = {
-  namespace: 'category',
-  state: {
-    list: [],
-    paging: {
-      total: 0,
-      limit: 10,
-      page: 1,
-    }
-  },
-  effects: {
-    * list(payload, { call, put }) {
-      const response = yield call(list, payload.payload);
-      yield put({
-        type: 'saveCategoryList',
-        payload: response,
-      });
-    },
+export default {
+	namespace: 'category',
 
-    * del(payload, { call, put }) {
-      const response = yield call(del, payload.payload);
-      if (response.success) {
-        yield put({
-          type: 'delItem',
-          payload: payload.payload.id,
-        });
-      }
-      return;
-    },
-  },
+	state: {
+		categoryList: [],
+		total: 0,
+	},
 
-  reducers: {
-    saveCategoryList(state = {
-      list: [],
-      paging: {}
-    }, action) {
-      return {
-        ...state,
-        list: action.payload.data.results || [],
-        paging: action.payload.data.page || state.paging
-      };
-    },
-    // 删除制定元素
-    delItem(state, action) {
-      state.list.splice(state.list.findIndex(item => item.id === action.payload), 1)
-      return {
-        ...state
-      };
-    },
-  },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      history.listen(({ pathname }) => {
-        if (pathname === '/category') {
-          dispatch({
-            type: 'list'
-          });
-        }
-      });
-    },
-  },
+	effects: {
+		*queryCategory({ payload }, { call, put }) {
+			const { resolve, params } = payload;
+			const response = yield call(queryCategory, params);
+			!!resolve && resolve(response); // 返回数据
+			// console.log('response :', response)
+			if (response.code === 0) {
+				yield put({
+					type: 'saveCategoryList',
+					payload: response.data.list,
+				});
+				yield put({
+					type: 'saveCategoryListTotal',
+					payload: response.data.count,
+				});
+			} else {
+				// 
+			}
+		},
+		*addCategory({ payload }, { call, put }) {
+			const { resolve, params } = payload;
+			const response = yield call(addCategory, params);
+			!!resolve && resolve(response);
+		},
+		*delCategory({ payload }, { call, put }) {
+			const { resolve, params } = payload;
+			const response = yield call(delCategory, params);
+			!!resolve && resolve(response);
+		},
+	},
+
+	reducers: {
+		saveCategoryList(state, { payload }) {
+			return {
+				...state,
+				categoryList: payload,
+			};
+		},
+		saveCategoryListTotal(state, { payload }) {
+			return {
+				...state,
+				total: payload,
+			};
+		},
+	},
 };
-export default CategoryModel;

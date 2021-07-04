@@ -1,65 +1,28 @@
+// Change theme plugin
+
+import MergeLessPlugin from 'antd-pro-merge-less';
+import AntDesignThemePlugin from 'antd-pro-theme-webpack-plugin';
 import path from 'path';
 
-function getModulePackageName(module) {
-  if (!module.context) return null;
-  const nodeModulesPath = path.join(__dirname, '../node_modules/');
+export default config => {
+  // 将所有 less 合并为一个供 themePlugin使用
+  const outFile = path.join(__dirname, '../.temp/ant-design-pro.less');
+  const stylesDir = path.join(__dirname, '../src/');
 
-  if (module.context.substring(0, nodeModulesPath.length) !== nodeModulesPath) {
-    return null;
-  }
+  config.plugin('merge-less').use(MergeLessPlugin, [
+    {
+      stylesDir,
+      outFile,
+    },
+  ]);
 
-  const moduleRelativePath = module.context.substring(nodeModulesPath.length);
-  const [moduleDirName] = moduleRelativePath.split(path.sep);
-  let packageName = moduleDirName; // handle tree shaking
-
-  if (packageName && packageName.match('^_')) {
-    // eslint-disable-next-line prefer-destructuring
-    packageName = packageName.match(/^_(@?[^@]+)/)[1];
-  }
-
-  return packageName;
-}
-
-export const webpackPlugin = config => {
-  // optimize chunks
-  config.optimization // share the same chunks across different modules
-    .runtimeChunk(false)
-    .splitChunks({
-      chunks: 'async',
-      name: 'vendors',
-      maxInitialRequests: Infinity,
-      minSize: 0,
-      cacheGroups: {
-        vendors: {
-          test: module => {
-            const packageName = getModulePackageName(module) || '';
-
-            if (packageName) {
-              return [
-                'bizcharts',
-                'gg-editor',
-                'g6',
-                '@antv',
-                'gg-editor-core',
-                'bizcharts-plugin-slider',
-              ].includes(packageName);
-            }
-
-            return false;
-          },
-
-          name(module) {
-            const packageName = getModulePackageName(module);
-
-            if (packageName) {
-              if (['bizcharts', '@antv_data-set'].indexOf(packageName) >= 0) {
-                return 'viz'; // visualization package
-              }
-            }
-
-            return 'misc';
-          },
-        },
-      },
-    });
+  config.plugin('ant-design-theme').use(AntDesignThemePlugin, [
+    {
+      antDir: path.join(__dirname, '../node_modules/antd'),
+      stylesDir,
+      varFile: path.join(__dirname, '../node_modules/antd/lib/style/themes/default.less'),
+      mainLessFile: outFile, //     themeVariables: ['@primary-color'],
+      indexFileName: 'index.html',
+    },
+  ]);
 };
