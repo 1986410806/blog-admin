@@ -14,7 +14,7 @@ import {
   Divider,
   Tag,
   Select,
-  Avatar
+  Avatar,
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
@@ -103,7 +103,7 @@ class TableList extends PureComponent {
               </Fragment>
               <Divider type="vertical" />
               <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(text, record)}>
-                <a href="javascript:;">Delete</a>
+                <a href="#!">Delete</a>
               </Popconfirm>
             </div>
           ),
@@ -211,7 +211,7 @@ class TableList extends PureComponent {
   }
 
   handleChange(event) {
-    console.log('event.target.value :', event.target.name)
+    console.log('event.target.value :', event.target.name);
     this.setState({
       [event.target.name]: event.target.value,
     });
@@ -438,7 +438,6 @@ class TableList extends PureComponent {
           <div className="">
             <div className="">{this.renderSimpleForm()}</div>
             <Table
-              pagination={pagination}
               loading={this.state.loading}
               pagination={pagination}
               rowKey={record => record._id}

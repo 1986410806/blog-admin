@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import {
@@ -11,7 +11,6 @@ import {
   Table,
   notification,
   Popconfirm,
-  Switch,
   Tag,
   Select,
 } from 'antd';
@@ -73,7 +72,7 @@ class TableList extends PureComponent {
           title: '操作',
           render: (text, record) => (
             <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(text, record)}>
-              <a href="javascript:;">Delete</a>
+              <a href="#">Delete</a>
             </Popconfirm>
           ),
         },
@@ -250,7 +249,6 @@ class TableList extends PureComponent {
           <div className="">
             <div className="">{this.renderSimpleForm()}</div>
             <Table
-              pagination={pagination}
               loading={this.state.loading}
               pagination={pagination}
               rowKey={record => record._id}

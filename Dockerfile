@@ -1,17 +1,20 @@
-FROM node:latest
+FROM node:alpine as builder
 
-WORKDIR /usr/src/app/
+WORKDIR /app
 
-COPY package.json ./
-RUN npm install --silent --no-cache
+COPY package.json /app
 
-COPY ./ ./
+RUN yarn config set registry https://registry.npm.taobao.org && \
+  yarn install --no-cache
 
-RUN apt-get update
-RUN apt-get install -yq gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
-  libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 \
-  libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 \
-  libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
-  ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+COPY . .
 
-CMD ["npm", "run", "build"]
+RUN yarn run build
+
+FROM nginx:alpine
+
+WORKDIR /var/nginx/html
+COPY --from=builder /app/dist/ .
+COPY nginx.host.conf /etc/nginx/conf.d
+
+EXPOSE 8081

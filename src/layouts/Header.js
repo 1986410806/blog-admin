@@ -6,8 +6,8 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
-import styles from './Header.less';
 import Authorized from '@/utils/Authorized';
+import styles from './Header.less';
 
 const { Header } = Layout;
 
@@ -43,7 +43,11 @@ class HeaderView extends PureComponent {
   };
 
   handleNoticeClear = type => {
-    message.success(`${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({ id: `component.globalHeader.${type}` })}`);
+    message.success(
+      `${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({
+        id: `component.globalHeader.${type}`,
+      })}`
+    );
     const { dispatch } = this.props;
     dispatch({
       type: 'global/clearNotices',

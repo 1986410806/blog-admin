@@ -132,9 +132,8 @@ class TableList extends PureComponent {
           dataIndex: 'comments',
           width: 50,
           render: comments => {
-            // console.log('comments',comments)
             let flag = 1;
-            let length = comments.length;
+            const { length } = comments;
             if (length) {
               for (let i = 0; i < length; i++) {
                 flag = comments[i].is_handle;
@@ -192,13 +191,17 @@ class TableList extends PureComponent {
               </Fragment>
               <Divider type="vertical" />
               <Fragment>
-                <a href={`${domain}articleDetail?article_id=${record._id}`} target="_blank">
+                <a
+                  href={`${domain}articleDetail?article_id=${record._id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   详情
                 </a>
               </Fragment>
               <Divider type="vertical" />
               <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(text, record)}>
-                <a href="javascript:;">Delete</a>
+                <a href="#">Delete</a>
               </Popconfirm>
             </div>
           ),
@@ -236,6 +239,7 @@ class TableList extends PureComponent {
   }
 
   handleSubmit() {
+    console.log(12313);
     const { dispatch } = this.props;
     const { articleDetail } = this.props.article;
     if (!this.state.title) {
@@ -263,7 +267,7 @@ class TableList extends PureComponent {
       loading: true,
     });
 
-    let keyword = this.state.keyword;
+    let { keyword } = this.state;
     if (keyword instanceof Array) {
       keyword = keyword.join(',');
     }
@@ -534,8 +538,8 @@ class TableList extends PureComponent {
           }
         }
         const category = categoryArr.length ? categoryArr.join() : '';
-        console.log('tagsArr :', tagsArr);
-        console.log('categoryArr :', categoryArr);
+        // console.log('tagsArr :', tagsArr);
+        // console.log('categoryArr :', categoryArr);
         if (res.code === 0) {
           this.setState({
             visible: true,
@@ -587,6 +591,7 @@ class TableList extends PureComponent {
       visible: false,
     });
   };
+
   handleCommentsCancel = e => {
     this.setState({
       commentsVisible: false,
@@ -731,7 +736,6 @@ class TableList extends PureComponent {
             <div className="">{this.renderSimpleForm()}</div>
             <Table
               size="middle"
-              pagination={pagination}
               loading={this.state.loading}
               pagination={pagination}
               rowKey={record => record._id}

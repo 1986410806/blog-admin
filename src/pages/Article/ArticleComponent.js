@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input, Modal, Select, notification } from 'antd';
 import { connect } from 'dva';
+import FromMarkdown from '@/pages/Article/FromMarkdown';
 
 @connect(({ article, tag, category }) => ({
   article,
@@ -15,6 +16,7 @@ class ArticleComponent extends React.Component {
       keywordCom: '',
       pageNum: 1,
       pageSize: 50,
+      smde: null,
     };
     this.handleSearchTag = this.handleSearchTag.bind(this);
     this.handleSearchCategory = this.handleSearchCategory.bind(this);
@@ -251,15 +253,9 @@ class ArticleComponent extends React.Component {
           >
             {categoryChildren}
           </Select>
-          <TextArea
-            style={{ marginBottom: 20 }}
-            size="large"
-            rows={6}
-            autosize={{ minRows: 15 }}
-            placeholder="文章内容，支持 markdown 格式"
-            name="content"
-            value={this.props.content}
-            onChange={this.props.handleChangeContent}
+          <FromMarkdown
+            content={this.props.content}
+            handleChangeContent={this.props.handleChangeContent}
           />
         </Modal>
       </div>

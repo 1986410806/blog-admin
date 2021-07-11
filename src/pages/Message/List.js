@@ -12,7 +12,6 @@ import {
   notification,
   Popconfirm,
   Divider,
-  Switch,
   Tag,
   Select,
 } from 'antd';
@@ -84,7 +83,7 @@ class TableList extends PureComponent {
               </Fragment>
               <Divider type="vertical" />
               <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(text, record)}>
-                <a href="javascript:;">Delete</a>
+                <a href="#">Delete</a>
               </Popconfirm>
             </div>
           ),
@@ -300,7 +299,6 @@ class TableList extends PureComponent {
             <Table
               pagination={pagination}
               loading={this.state.loading}
-              pagination={pagination}
               rowKey={record => record._id}
               columns={this.state.columns}
               bordered

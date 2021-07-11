@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Modal, Select, notification, Comment, Avatar, Tag } from 'antd';
+import { Modal, Select, notification, Comment, Avatar, Tag } from 'antd';
 import { connect } from 'dva';
 
 @connect(({ article }) => ({
@@ -61,7 +61,7 @@ class CommentsComponent extends React.Component {
       const params = {
         id: item._id,
         state: parseInt(value),
-        index: index,
+        index,
       };
       new Promise(resolve => {
         dispatch({
@@ -101,7 +101,7 @@ class CommentsComponent extends React.Component {
         content={
           <p>
             {' '}
-            {item.to_user ? '@' + item.to_user.name + ':  ' : ''} {item.content}
+            {item.to_user ? `@${item.to_user.name}:  ` : ''} {item.content}
           </p>
         }
       >
@@ -109,8 +109,8 @@ class CommentsComponent extends React.Component {
       </Comment>
     );
 
-    let list = [];
-    let length = articleDetail.comments.length;
+    const list = [];
+    const { length } = articleDetail.comments;
     for (let i = 0; i < length; i++) {
       const e = articleDetail.comments[i];
       let defaultValue = '';
@@ -147,11 +147,11 @@ class CommentsComponent extends React.Component {
         </div>,
       ];
       e.actions = actions;
-      let len = e.other_comments.length;
+      const len = e.other_comments.length;
       if (len) {
-        let arr = [];
+        const arr = [];
         for (let i = 0; i < len; i++) {
-          let item = e.other_comments[i];
+          const item = e.other_comments[i];
           let defaultValue = '';
           if (item.state === 0) {
             defaultValue = '待审核';
