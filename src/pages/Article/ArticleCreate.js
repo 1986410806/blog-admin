@@ -11,10 +11,11 @@ import FromMarkdown from '@/pages/Article/FromMarkdown';
 }))
 class ArticleCreate extends React.Component {
   constructor(props) {
-    console.log('ArticleCreate');
+    // console.log('ArticleCreate');
     super(props);
     this.state = {
       loading: false,
+      // eslint-disable-next-line react/no-unused-state
       keywordCom: '',
       pageNum: 1,
       pageSize: 50,
@@ -25,6 +26,7 @@ class ArticleCreate extends React.Component {
       content: '',
       desc: '',
       img_url: '',
+      // eslint-disable-next-line react/no-unused-state
       origin: 0, // 0 原创，1 转载，2 混合
       state: 1, // 文章发布状态 => 0 草稿，1 已发布
       type: 1, // 文章类型 => 1: 普通文章，2: 简历，3: 管理员介绍
@@ -50,49 +52,69 @@ class ArticleCreate extends React.Component {
     this.handleSearchCategory();
   }
 
-  handleSubmit() {
-    const { dispatch } = this.props;
-    const { articleDetail } = this.props.article;
-    if (!this.state.title) {
+  handleSubmit = () => {
+    const { dispatch, article } = this.props;
+    const {
+      title,
+      keyword,
+      author,
+      changeType,
+      desc,
+      content,
+      state,
+      type,
+      tags,
+      category,
+      pageNum,
+      pageSize,
+      // eslint-disable-next-line camelcase
+      img_url,
+    } = this.state;
+    // eslint-disable-next-line react/prop-types
+    const { articleDetail } = article;
+    let keyword1 = '';
+
+    if (title) {
       notification.error({
         message: '文章标题不能为空',
       });
       return;
     }
-    if (!this.state.keyword) {
+    if (!keyword) {
       notification.error({
         message: '文章关键字不能为空',
       });
       return;
     }
-    if (!this.state.content) {
+    if (!content) {
       notification.error({
         message: '文章内容不能为空',
       });
       return;
     }
-    let { keyword } = this.state;
+
     if (keyword instanceof Array) {
-      keyword = keyword.join(',');
+      keyword1 = keyword.join(',');
     }
+
     this.setState({
       loading: true,
     });
     // 修改
-    if (this.state.changeType) {
+    if (changeType) {
       const params = {
         id: articleDetail._id,
-        title: this.state.title,
-        author: this.state.author,
-        desc: this.state.desc,
-        keyword,
-        content: this.state.content,
-        img_url: this.state.img_url,
-        origin: this.state.origin,
-        state: this.state.state,
-        type: this.state.type,
-        tags: this.state.tags,
-        category: this.state.category,
+        title,
+        author,
+        desc,
+        keyword: keyword1,
+        content,
+        img_url,
+        origin,
+        state,
+        type,
+        tags,
+        category,
       };
       new Promise(resolve => {
         dispatch({
@@ -108,6 +130,7 @@ class ArticleCreate extends React.Component {
             message: res.message,
           });
           this.setState({
+            // eslint-disable-next-line react/no-unused-state
             visible: false,
             changeType: false,
             title: '',
@@ -116,6 +139,7 @@ class ArticleCreate extends React.Component {
             content: '',
             desc: '',
             img_url: '',
+            // eslint-disable-next-line react/no-unused-state
             origin: 0, // 0 原创，1 转载，2 混合
             state: 1, // 文章发布状态 => 0 草稿，1 已发布
             type: 1, // 文章类型 => 1: 普通文章，2: 简历，3: 管理员介绍
@@ -124,7 +148,7 @@ class ArticleCreate extends React.Component {
             tagsDefault: [],
             categoryDefault: [],
           });
-          this.handleSearch(this.state.pageNum, this.state.pageSize);
+          this.handleSearch(pageNum, pageSize);
         } else {
           notification.error({
             message: res.message,
@@ -134,17 +158,17 @@ class ArticleCreate extends React.Component {
     } else {
       // 添加
       const params = {
-        title: this.state.title,
-        author: this.state.author,
-        desc: this.state.desc,
-        keyword: this.state.keyword,
-        content: this.content,
-        img_url: this.state.img_url,
-        origin: this.state.origin,
-        state: this.state.state,
-        type: this.state.type,
-        tags: this.state.tags,
-        category: this.state.category,
+        title,
+        author,
+        desc,
+        keyword: keyword1,
+        content,
+        img_url,
+        origin,
+        state,
+        type,
+        tags,
+        category,
       };
       new Promise(resolve => {
         dispatch({
@@ -161,6 +185,7 @@ class ArticleCreate extends React.Component {
           });
           this.setState({
             loading: false,
+            // eslint-disable-next-line react/no-unused-state
             chnageType: false,
           });
           // this.handleSearch(this.state.pageNum, this.state.pageSize);
@@ -171,57 +196,58 @@ class ArticleCreate extends React.Component {
         }
       });
     }
-  }
+  };
 
-  handleChange(event) {
+  handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value,
     });
-  }
+  };
 
-  handleTagChange(value) {
+  handleTagChange = value => {
     const tags = value.join();
     this.setState({
       tagsDefault: value,
       tags,
     });
-  }
+  };
 
-  handleCategoryChange(value) {
+  handleCategoryChange = value => {
     const category = value.join();
     this.setState({
       categoryDefault: value,
       category,
     });
-  }
+  };
 
-  handleChangeState(value) {
+  handleChangeState = value => {
     this.setState({
       state: value,
     });
-  }
+  };
 
-  handleChangeOrigin(value) {
+  handleChangeOrigin = value => {
     this.setState({
       origin: value,
     });
-  }
+  };
 
-  handleChangeType(value) {
+  handleChangeType = value => {
     this.setState({
       type: value,
     });
-  }
+  };
 
   handleSearchTag = () => {
     this.setState({
       loading: true,
     });
     const { dispatch } = this.props;
+    const { state } = this.state;
     const params = {
-      keyword: this.state.keywordCom,
-      pageNum: this.state.pageNum,
-      pageSize: this.state.pageSize,
+      keyword: state.keywordCom,
+      pageNum: state.pageNum,
+      pageSize: state.pageSize,
     };
     new Promise(resolve => {
       dispatch({
@@ -249,10 +275,11 @@ class ArticleCreate extends React.Component {
       loading: true,
     });
     const { dispatch } = this.props;
+    const { state } = this.state;
     const params = {
-      keyword: this.state.keyword,
-      pageNum: this.state.pageNum,
-      pageSize: this.state.pageSize,
+      keyword: state.keyword,
+      pageNum: state.pageNum,
+      pageSize: state.pageSize,
     };
     new Promise(resolve => {
       dispatch({
@@ -282,8 +309,9 @@ class ArticleCreate extends React.Component {
   };
 
   render() {
-    const { tagList } = this.props.tag;
-    const { categoryList } = this.props.category;
+    const { category, tag } = this.props;
+    const { tagList } = tag;
+    const { categoryList } = category;
     const children = [];
     const categoryChildren = [];
     for (let i = 0; i < tagList.length; i++) {
