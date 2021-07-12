@@ -239,7 +239,6 @@ class TableList extends PureComponent {
   }
 
   handleSubmit() {
-    console.log(12313);
     const { dispatch } = this.props;
     const { articleDetail } = this.props.article;
     if (!this.state.title) {
@@ -260,9 +259,7 @@ class TableList extends PureComponent {
       });
       return;
     }
-    if (keyword instanceof Array) {
-      keyword = keyword.join(',');
-    }
+
     this.setState({
       loading: true,
     });
@@ -538,8 +535,6 @@ class TableList extends PureComponent {
           }
         }
         const category = categoryArr.length ? categoryArr.join() : '';
-        // console.log('tagsArr :', tagsArr);
-        // console.log('categoryArr :', categoryArr);
         if (res.code === 0) {
           this.setState({
             visible: true,
@@ -751,7 +746,6 @@ class TableList extends PureComponent {
           handleCommentsCancel={this.handleCommentsCancel}
           getArticleDetail={this.getArticleDetail}
         />
-
         <ArticleComponent
           changeType={this.state.changeType}
           title={this.state.title}

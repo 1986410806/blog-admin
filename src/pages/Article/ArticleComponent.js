@@ -16,7 +16,6 @@ class ArticleComponent extends React.Component {
       keywordCom: '',
       pageNum: 1,
       pageSize: 50,
-      smde: null,
     };
     this.handleSearchTag = this.handleSearchTag.bind(this);
     this.handleSearchCategory = this.handleSearchCategory.bind(this);

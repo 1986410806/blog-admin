@@ -11,11 +11,9 @@ import FromMarkdown from '@/pages/Article/FromMarkdown';
 }))
 class ArticleCreate extends React.Component {
   constructor(props) {
-    // console.log('ArticleCreate');
     super(props);
     this.state = {
       loading: false,
-      // eslint-disable-next-line react/no-unused-state
       keywordCom: '',
       pageNum: 1,
       pageSize: 50,
@@ -330,21 +328,11 @@ class ArticleCreate extends React.Component {
         </Select.Option>
       );
     }
-    // const { articleDetail } = this.props.article;
-    // const { changeType } = this.props;
     const originDefault = '原创';
     const stateDefault = '发布'; // 文章发布状态 => 0 草稿，1 发布
     const typeDefault = '普通文章'; // 文章类型 => 1: 普通文章，2: 简历，3: 管理员介绍
     const categoryDefault = [];
     const tagsDefault = [];
-    // if (changeType) {
-    // 	originDefault = articleDetail.origin === 0 ? '原创' : '';
-    // 	stateDefault = articleDetail.state ? '已发布' : '草稿';
-    // 	typeDefault = articleDetail.type === 1 ? '普通文章' : articleDetail.type === 2 ? '简历' : '管理员介绍';
-    // 	categoryDefault = this.props.categoryDefault;
-    // 	tagsDefault = this.props.tagsDefault;
-    // } else {
-    // }
     const normalCenter = {
       textAlign: 'center',
       marginBottom: 10,

@@ -15,6 +15,6 @@ FROM nginx:alpine
 
 WORKDIR /var/nginx/html
 COPY --from=builder /app/dist/ .
-COPY nginx.host.conf /etc/nginx/conf.d
+COPY nginx.host.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 8081
+EXPOSE 80

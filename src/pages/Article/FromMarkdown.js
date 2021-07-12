@@ -9,9 +9,9 @@ import './style.less';
 class FromMarkdown extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       smde: null,
-      value: false,
     };
   }
 
