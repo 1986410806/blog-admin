@@ -1,4 +1,5 @@
 import { queryCurrent, queryFakeList } from './service';
+
 const Model = {
   namespace: 'accountAndcenter',
   state: {

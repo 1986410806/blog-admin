@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Alert, Button, Descriptions, Divider, Statistic, Input } from 'antd';
 import { connect } from 'umi';
 import styles from './index.less';
+
 const formItemLayout = {
   labelCol: {
     span: 5,

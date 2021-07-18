@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Button, Divider, Input, Select } from 'antd';
 import { connect } from 'umi';
 import styles from './index.less';
+
 const { Option } = Select;
 const formItemLayout = {
   labelCol: {

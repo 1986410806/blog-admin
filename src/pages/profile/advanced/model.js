@@ -1,4 +1,5 @@
 import { queryAdvancedProfile } from './service';
+
 const Model = {
   namespace: 'profileAndadvanced',
   state: {

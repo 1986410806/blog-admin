@@ -1,4 +1,5 @@
 import { queryBasicProfile } from './service';
+
 const Model = {
   namespace: 'profileAndbasic',
   state: {

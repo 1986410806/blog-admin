@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { Select, Spin } from 'antd';
 import { connect } from 'umi';
 import styles from './GeographicView.less';
+
 const { Option } = Select;
 const nullSelectItem = {
   label: '',
@@ -52,6 +53,7 @@ class GeographicView extends Component {
 
     return [];
   };
+
   getOption = (list) => {
     if (!list || list.length < 1) {
       return (
@@ -67,6 +69,7 @@ class GeographicView extends Component {
       </Option>
     ));
   };
+
   selectProvinceItem = (item) => {
     const { dispatch, onChange } = this.props;
 
@@ -84,6 +87,7 @@ class GeographicView extends Component {
       });
     }
   };
+
   selectCityItem = (item) => {
     const { value, onChange } = this.props;
 

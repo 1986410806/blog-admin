@@ -1,4 +1,5 @@
 import { queryTags } from './service';
+
 const Model = {
   namespace: 'dashboardAndmonitor',
   state: {

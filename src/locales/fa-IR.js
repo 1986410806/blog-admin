@@ -5,6 +5,7 @@ import pwa from './fa-IR/pwa';
 import settingDrawer from './fa-IR/settingDrawer';
 import settings from './fa-IR/settings';
 import pages from './fa-IR/pages';
+
 export default {
   'navBar.lang': 'زبان ها  ',
   'layout.user.link.help': 'کمک',

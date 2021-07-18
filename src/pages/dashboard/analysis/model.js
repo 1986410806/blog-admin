@@ -1,4 +1,5 @@
 import { fakeChartData } from './service';
+
 const initState = {
   visitData: [],
   visitData2: [],

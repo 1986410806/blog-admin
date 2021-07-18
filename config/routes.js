@@ -4,49 +4,137 @@ export default [
     layout: false,
     routes: [
       {
+        path: '/user/login',
+        layout: false,
+        name: 'login',
+        component: './User/Login',
+      },
+      {
         path: '/user',
-        routes: [
-          {
-            name: 'login',
-            path: '/user/login',
-            component: './user/Login',
-          },
-        ],
+        redirect: '/user/login',
+      },
+      {
+        component: '404',
       },
     ],
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    component: './Admin',
+    path: '/dashboard',
+    name: 'dashboard',
+    icon: 'dashboard',
     routes: [
       {
-        path: '/admin/sub-page',
-        name: 'sub-page',
+        name: 'analysis',
         icon: 'smile',
-        component: './Welcome',
+        path: '/dashboard/analysis',
+        component: './dashboard/analysis',
+      },
+      {
+        name: 'monitor',
+        icon: 'smile',
+        path: '/dashboard/monitor',
+        component: './dashboard/monitor',
+      },
+      {
+        name: 'workplace',
+        icon: 'smile',
+        path: '/dashboard/workplace',
+        component: './dashboard/workplace',
       },
     ],
   },
   {
-    name: 'list.table-list',
+    path: '/article',
     icon: 'table',
-    path: '/list',
-    component: './TableList',
+    name: 'article',
+    routes: [
+      {
+        path: '/article/list',
+        name: 'list',
+        component: './article/list',
+      },
+      {
+        path: '/article/form',
+        name: 'form',
+        component: './article/form',
+      },
+      {
+        name: 'tags',
+        icon: 'TagsOutlined',
+        path: 'article/tag',
+        component: './tag',
+      },
+      {
+        name: 'category',
+        icon: 'MenuOutlined',
+        path: '/article/category',
+        component: './category',
+      },
+    ],
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    icon: 'profile',
+    routes: [
+      {
+        name: 'basic',
+        icon: 'smile',
+        path: '/profile/basic',
+        component: './profile/basic',
+      },
+      {
+        name: 'advanced',
+        icon: 'smile',
+        path: '/profile/advanced',
+        component: './profile/advanced',
+      },
+    ],
+  },
+  {
+    name: 'result',
+    icon: 'CheckCircleOutlined',
+    path: '/result',
+    routes: [
+      {
+        name: 'success',
+        icon: 'smile',
+        path: '/result/success',
+        component: './result/success',
+      },
+      {
+        name: 'fail',
+        icon: 'smile',
+        path: '/result/fail',
+        component: './result/fail',
+      },
+    ],
+  },
+  {
+    name: 'account',
+    icon: 'user',
+    path: '/account',
+    routes: [
+      {
+        name: 'center',
+        icon: 'smile',
+        path: '/account/center',
+        component: './account/center',
+      },
+      {
+        name: 'settings',
+        icon: 'smile',
+        path: '/account/settings',
+        component: './account/settings',
+      },
+    ],
+  },
+
   {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/dashboard/analysis',
   },
   {
-    component: './404',
+    component: '404',
   },
 ];

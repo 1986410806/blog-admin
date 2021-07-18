@@ -1,4 +1,5 @@
 import { fakeChartData, queryActivities, queryCurrent, queryProjectNotice } from './service';
+
 const Model = {
   namespace: 'dashboardAndworkplace',
   state: {
