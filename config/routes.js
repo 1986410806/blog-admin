@@ -21,7 +21,7 @@ export default [
   {
     path: '/dashboard',
     name: 'dashboard',
-    icon: 'dashboard',
+    icon: 'icon-shuju1',
     routes: [
       {
         name: 'analysis',
@@ -45,7 +45,7 @@ export default [
   },
   {
     path: '/article',
-    icon: 'table',
+    icon: 'icon-shu',
     name: 'article',
     routes: [
       {

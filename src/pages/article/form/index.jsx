@@ -9,7 +9,6 @@ import { addArticle, queryTag, queryCategory } from '@/services/ant-design-pro/a
 import { history } from 'umi';
 import Markdown from '../../../components/Markdown/Markdown';
 
-
 /**
  * 添加节点
  *
@@ -17,25 +16,40 @@ import Markdown from '../../../components/Markdown/Markdown';
  */
 const ArticleCreate = async (fields) => {
 
-  const hide = message.loading('正在添加');
-
-  try {
-    await addArticle({ ...fields });
-    hide();
-    message.success('添加成功');
-    history.push('/article');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
+  console.log(fields);
+  // const hide = message.loading('正在添加');
+  //
+  // try {
+  //   await addArticle({ ...fields });
+  //   hide();
+  //   message.success('添加成功');
+  //   history.push('/article');
+  //   return true;
+  // } catch (error) {
+  //   hide();
+  //   message.error('添加失败请重试！');
+  //   return false;
+  // }
 };
 
 
-const ArticleForm = () => {
+const ArticleForm = (props) => {
+  let markdownThis = null;
+
+  const bindMarkDownThis = (markdown) => {
+    markdownThis = markdown;
+  };
+
+  const getContent = () => {
+    console.log(markdownThis.getMarkdownValue());
+    return markdownThis.getMarkdownValue();
+  };
+
+
   return (
-    <PageContainer>
+    <PageContainer waterMarkProps={
+      { content: '王富贵' }
+    }>
       <Card bordered={false}>
         <ProForm
           hideRequiredMark
@@ -44,163 +58,172 @@ const ArticleForm = () => {
           }}
           name='basic'
           layout='vertical'
-          initialValues={{
-            public: '1',
-          }}
-          onFinish={async (values) => {
+          initialValues={{}}
+          onFinish={(values) => {
+            let content = getContent();
+            console.log(values)
+            console.log(content)
+            if (!content) {
+              message.error('正文必须填~~');
+              return false;
+            }
+            console.log(content)
+            values.content = getContent();
+            console.log(content)
             ArticleCreate(values);
           }}
         >
-          <ProFormText
-            width='md'
-            label='标题'
-            name='title'
-            rules={[
-              {
-                required: true,
-                message: '请输入标题',
-              },
-            ]}
-            placeholder='文章标题'
-          />
-          <ProFormText
-            width='md'
-            label='作者'
-            name='author'
-            rules={[
-              {
-                required: true,
-                message: '请输入作者',
-              },
-            ]}
-            placeholder='作者名字'
-          />
-          <ProFormText
-            width='md'
-            label='关键字'
-            name='keyword'
-            rules={[
-              {
-                required: true,
-                message: '关键字不能为空',
-              },
-            ]}
-            placeholder='关键字（seo检索）'
-          />
-          <ProFormText
-            width='md'
-            label='描述'
-            name='desc'
-            rules={[
-              {
-                required: true,
-                message: '关键字不能为空',
-              },
-            ]}
-            placeholder='关键字（seo检索）'
-          />
-          <ProFormText
-            width='md'
-            label='封面图'
-            name='img_url'
-            rules={[
-              {
-                required: true,
-                message: '封面不能为空',
-              },
-            ]}
-            placeholder='封面图'
-          />
+          {/* 判断时候更新*/}
+          {/*{props.values?.id &&*/}
+          {/*<ProFormText*/}
+          {/*  width='md'*/}
+          {/*  label='ID'*/}
+          {/*  fieldProps={{ readonly }}*/}
+          {/*  name='id'*/}
+          {/*/>*/}
+          {/*}*/}
 
 
-          <ProFormSelect
-            name='state'
-            label='发布状态'
-            valueEnum={{
-              0: '草稿',
-              1: '发布',
-            }}
-            placeholder='选择发布状态'
-            rules={[{ required: true, message: '请选择发布状态' }]}
-          />
+          {/*<ProFormText*/}
+          {/*  width='md'*/}
+          {/*  label='标题'*/}
+          {/*  name='title'*/}
+          {/*  rules={[*/}
+          {/*    {*/}
+          {/*      required: true,*/}
+          {/*      message: '请输入标题',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*  placeholder='文章标题'*/}
+          {/*/>*/}
+          {/*<ProFormText*/}
+          {/*  width='md'*/}
+          {/*  label='作者'*/}
+          {/*  name='author'*/}
+          {/*  rules={[*/}
+          {/*    {*/}
+          {/*      required: true,*/}
+          {/*      message: '请输入作者',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*  placeholder='作者名字'*/}
+          {/*/>*/}
+          {/*<ProFormText*/}
+          {/*  width='md'*/}
+          {/*  label='关键字'*/}
+          {/*  name='keyword'*/}
+          {/*  rules={[*/}
+          {/*    {*/}
+          {/*      required: true,*/}
+          {/*      message: '关键字不能为空',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*  placeholder='关键字（seo检索）'*/}
+          {/*/>*/}
+          {/*<ProFormText*/}
+          {/*  width='md'*/}
+          {/*  label='描述'*/}
+          {/*  name='desc'*/}
+          {/*  rules={[*/}
+          {/*    {*/}
+          {/*      required: true,*/}
+          {/*      message: '关键字不能为空',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*  placeholder='关键字（seo检索）'*/}
+          {/*/>*/}
+          {/*<ProFormText*/}
+          {/*  width='md'*/}
+          {/*  label='封面图'*/}
+          {/*  name='img_url'*/}
+          {/*  rules={[*/}
+          {/*    {*/}
+          {/*      required: true,*/}
+          {/*      message: '封面不能为空',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*  placeholder='封面图'*/}
+          {/*/>*/}
 
-          <ProFormSelect
-            name='type'
-            label='文章类型'
-            valueEnum={{
-              1: '普通文章',
-              2: '简历',
-              3: '管理员介绍',
-            }}
-            placeholder='请选择发布状态'
-            rules={[{ required: true, message: '请选择发布状态' }]}
-          />
 
-          <ProFormSelect
-            name='origin'
-            label='文章类型'
-            valueEnum={{
-              0: '原创',
-              1: '转载',
-              2: '混合',
-            }}
-            placeholder='选择文章转载状态'
-            rules={[{ required: true, message: '选择文章转载状态' }]}
-          />
+          {/*<ProFormSelect*/}
+          {/*  name='state'*/}
+          {/*  label='发布状态'*/}
+          {/*  valueEnum={{*/}
+          {/*    0: '草稿',*/}
+          {/*    1: '发布',*/}
+          {/*  }}*/}
+          {/*  placeholder='选择发布状态'*/}
+          {/*  rules={[{ required: true, message: '请选择发布状态' }]}*/}
+          {/*/>*/}
 
+          {/*<ProFormSelect*/}
+          {/*  name='type'*/}
+          {/*  label='文章类型'*/}
+          {/*  valueEnum={{*/}
+          {/*    1: '普通文章',*/}
+          {/*    2: '简历',*/}
+          {/*    3: '管理员介绍',*/}
+          {/*  }}*/}
+          {/*  placeholder='请选择发布状态'*/}
+          {/*  rules={[{ required: true, message: '请选择发布状态' }]}*/}
+          {/*/>*/}
 
-          <ProFormSelect.SearchSelect
-            name='tags'
-            label='标签选项'
-            fieldProps={{
-              labelInValue: true,
-            }}
-            request={async ({ keyWords = '' }) => {
-              const tags = await queryTag({ pageNum: 1, pageSize: 300, keyword: keyWords });
-              return tags.data.list.map((item) => {
-                return {
-                  label: item.name, value: item._id
-                }
-              });
-            }}
-            rules={[{ required: true, message: '请选择标签' }]}
-          />
+          {/*<ProFormSelect*/}
+          {/*  name='origin'*/}
+          {/*  label='文章类型'*/}
+          {/*  valueEnum={{*/}
+          {/*    0: '原创',*/}
+          {/*    1: '转载',*/}
+          {/*    2: '混合',*/}
+          {/*  }}*/}
+          {/*  placeholder='选择文章转载状态'*/}
+          {/*  rules={[{ required: true, message: '选择文章转载状态' }]}*/}
+          {/*/>*/}
 
-          <ProFormSelect.SearchSelect
-            name='tags'
-            label='标签选项'
-            fieldProps={{
-              labelInValue: true,
-            }}
-            request={async ({ keyWords = '' }) => {
-              const tags = await queryTag({ pageNum: 1, pageSize: 300, keyword: keyWords });
-              return tags.data.list.map((item) => {
-                return {
-                  label: item.name, value: item._id
-                }
-              });
-            }}
-            rules={[{ required: true, message: '请选择标签' }]}
-          />
+          {/*<ProFormSelect.SearchSelect*/}
+          {/*  name='tags'*/}
+          {/*  label='标签选项'*/}
+          {/*  fieldProps={{*/}
+          {/*    labelInValue: true,*/}
+          {/*  }}*/}
+          {/*  request={async ({ keyWords = '' }) => {*/}
+          {/*    const tags = await queryTag({ pageNum: 1, pageSize: 300, keyword: keyWords });*/}
+          {/*    return tags.data.list.map((item) => {*/}
+          {/*      return {*/}
+          {/*        label: item.name, value: item._id,*/}
+          {/*      };*/}
+          {/*    });*/}
+          {/*  }}*/}
+          {/*  rules={[{ required: true, message: '请选择标签' }]}*/}
+          {/*/>*/}
 
-          <ProFormSelect.SearchSelect
-            name='category'
-            label='文章分类'
-            fieldProps={{
-              labelInValue: true,
-            }}
-            request={async ({ keyWords = '' }) => {
-              const tags = await queryCategory({ pageNum: 1, pageSize: 300, keyword: keyWords });
-              return tags.data.list.map((item) => {
-                return {
-                  label: item.name, value: item._id
-                }
-              });
-            }}
-            rules={[{ required: true, message: '请选择文章分类' }]}
-          />
+          {/*<ProFormSelect.SearchSelect*/}
+          {/*  name='category'*/}
+          {/*  label='文章分类'*/}
+          {/*  fieldProps={{*/}
+          {/*    labelInValue: true,*/}
+          {/*  }}*/}
+          {/*  request={async ({ keyWords = '' }) => {*/}
+          {/*    const tags = await queryCategory({ pageNum: 1, pageSize: 300, keyword: keyWords });*/}
+          {/*    return tags.data.list.map((item) => {*/}
+          {/*      return {*/}
+          {/*        label: item.name, value: item._id,*/}
+          {/*      };*/}
+          {/*    });*/}
+          {/*  }}*/}
+          {/*  rules={[{ required: true, message: '请选择文章分类' }]}*/}
+          {/*/>*/}
 
-        <Markdown />
+          <label> 正文 </label>
+          <br />
+          <Markdown
+            bindMarkDownThis={bindMarkDownThis}
+            value={props.values?.content||""} />
+
+          <br />
+          <br />
+
         </ProForm>
       </Card>
     </PageContainer>
