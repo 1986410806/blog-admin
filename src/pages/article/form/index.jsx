@@ -82,13 +82,17 @@ export class ArticleForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      articleInfo: null,
+      articleInfo: {
+        author:""
+      },
     };
-  }
+  };
 
   componentDidMount = () => {
     getArticle(this.props.match.params.id).then(res => {
-      this.setState({ articleInfo: res.data });
+      this.setState({
+        articleInfo: res.data,
+      });
     });
   };
   bindMarkDownThis = (markdown) => {
@@ -99,7 +103,9 @@ export class ArticleForm extends React.Component {
   };
 
   render() {
-    console.log(this.state.articleInfo)
+    // const { articleInfo } = this.state;
+
+    // console.log(articleInfo);
     return (<PageContainer waterMarkProps={
         { content: '王富贵' }
       }>
@@ -110,7 +116,9 @@ export class ArticleForm extends React.Component {
               marginTop: 8,
             }}
             layout='vertical'
-            initialValues={{...this.state.articleInfo}}
+            initialValues={{
+              author: this.state.articleInfo.author,
+            }}
 
             onFinish={(values) => {
               let content = getContent();
