@@ -70,6 +70,10 @@ export default [
         path: '/article/category',
         component: './category',
       },
+      { // 编辑
+        path: '/article/edit/:id',
+        component: './article/form',
+      },
     ],
   },
   {

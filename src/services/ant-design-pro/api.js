@@ -250,20 +250,20 @@ export async function addReplyMessage(params) {
 
 // 文章
 export async function queryArticle(params) {
-  console.log(params);
   return request(`/api/getArticleListAdmin`, {
     method: 'GET',
     params: params,
   });
 }
 
-export async function addArticle(params) {
+export async function addArticle(params, options = {}) {
   return request('/api/addArticle', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     data: params,
+    ...(options || {}),
   });
 }
 
@@ -287,13 +287,14 @@ export async function updateArticle(params) {
   });
 }
 
-export async function getArticleDetail(params) {
-  return request('/api/getArticleDetail', {
+export async function getArticleDetail(params,options) {
+  return await request('/api/getArticleDetail', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     data: params,
+    ...(options || {}),
   });
 }
 
