@@ -1,12 +1,10 @@
-import { Card, message, Space } from 'antd';
-import ProForm, {
-  ProFormSelect,
-  ProFormText,
-} from '@ant-design/pro-form';
+import { Card, message } from 'antd';
+import ProForm, { ProFormSelect, ProFormText } from '@ant-design/pro-form';
 
 import { PageContainer } from '@ant-design/pro-layout';
-import { addArticle, queryTag, queryCategory, getArticleDetail } from '@/services/ant-design-pro/api';
+import { addArticle, queryTag, queryCategory, getArticleDetail, updateArticle } from '@/services/ant-design-pro/api';
 import { history } from 'umi';
+
 import Markdown from '../../../components/Markdown/Markdown';
 import React from 'react';
 
@@ -25,6 +23,32 @@ const ArticleCreate = async (fields) => {
 
   try {
     await addArticle({ ...fields });
+    hide();
+    message.success('添加成功');
+    history.push('/article/list');
+    return true;
+  } catch (error) {
+    hide();
+    console.error(error);
+    message.error('添加失败请重试！');
+    return false;
+  }
+};
+
+/**
+ * 更新文章
+ *
+ * @param fields
+ */
+const ArticleUpdate = async (fields) => {
+
+  const hide = message.loading('正在添加');
+
+  fields.tags = fields.tags.join(',');
+  fields.category = fields.category.join(',');
+
+  try {
+    await updateArticle({ ...fields });
     hide();
     message.success('添加成功');
     history.push('/article/list');
@@ -79,21 +103,41 @@ const getCategory = async ({ keyword = '' }) => {
 
 
 export class ArticleForm extends React.Component {
+  aId = 0;
+
   constructor(props) {
     super(props);
-    this.state = {
-      articleInfo: {
-        author:""
-      },
-    };
+    // 存在参数为编辑
+    if (this.props.match.params?.id) {
+      this.aId = this.props.match.params?.id;
+    }
   };
 
+  formRef = React.createRef();
+
   componentDidMount = () => {
-    getArticle(this.props.match.params.id).then(res => {
-      this.setState({
-        articleInfo: res.data,
+    if (this.aId) {
+      getArticle(this.aId).then(res => {
+        this.formRef?.current?.setFieldsValue({
+          id: res.data._id,
+          title: res.data.title,
+          author: res.data.author,
+          desc: res.data.desc,
+          img_url: res.data.img_url,
+          origin: res.data.origin,
+          keyword: res.data.keyword.join(','),
+          type: res.data.type,
+          state: res.data.state,
+          tags: res.data.tags.map(res => {
+            return res._id;
+          }),
+          category: res.data.category.map(res => {
+            return res._id;
+          }),
+        });
+        this.setContent(res.data.content);
       });
-    });
+    }
   };
   bindMarkDownThis = (markdown) => {
     this.markdownThis = markdown;
@@ -101,11 +145,25 @@ export class ArticleForm extends React.Component {
   getContent = () => {
     return this.markdownThis.getMarkdownValue();
   };
+  setContent = (val) => {
+    return this.markdownThis.setMarkdownValue(val);
+  };
 
   render() {
-    // const { articleInfo } = this.state;
 
-    // console.log(articleInfo);
+    const submit = (values) => {
+      let content = getContent();
+      if (content.length <= 1) {
+        message.error('正文必须填~~');
+        return false;
+      }
+      values.content = getContent();
+
+      this.aId === 0 ?
+        ArticleCreate(values) : // 新增
+        ArticleUpdate(values);// 更新
+    };
+
     return (<PageContainer waterMarkProps={
         { content: '王富贵' }
       }>
@@ -116,27 +174,16 @@ export class ArticleForm extends React.Component {
               marginTop: 8,
             }}
             layout='vertical'
-            initialValues={{
-              author: this.state.articleInfo.author,
-            }}
-
-            onFinish={(values) => {
-              let content = getContent();
-              if (content.length <= 1) {
-                message.error('正文必须填~~');
-                return false;
-              }
-              values.content = getContent();
-              ArticleCreate(values);
-            }}
+            formRef={this.formRef}
+            onFinish={submit}
           >
 
             {/* 判断时候更新*/}
-            {this.props.values?.id &&
+            {this.aId > 0 &&
             <ProFormText
               width='md'
               label='ID'
-              fieldProps={{ readonly }}
+              readonly
               name='id'
             />
             }
@@ -207,10 +254,10 @@ export class ArticleForm extends React.Component {
             <ProFormSelect
               name='state'
               label='发布状态'
-              valueEnum={{
-                0: '草稿',
-                1: '发布',
-              }}
+              options={[
+                { value: 0, label: '草稿' },
+                { value: 1, label: '发布' },
+              ]}
               placeholder='选择发布状态'
               rules={[{ required: true, message: '请选择发布状态' }]}
             />
@@ -218,11 +265,18 @@ export class ArticleForm extends React.Component {
             <ProFormSelect
               name='type'
               label='文章类型'
-              valueEnum={{
-                1: '普通文章',
-                2: '简历',
-                3: '管理员介绍',
-              }}
+              options={[
+                {
+                  label: '普通文章', value: 1,
+                },
+                {
+                  label: '简历', value: 2,
+                },
+                {
+                  label: '管理员介绍', value: 3,
+                },
+
+              ]}
               placeholder='请选择发布状态'
               rules={[{ required: true, message: '请选择发布状态' }]}
             />
@@ -230,11 +284,11 @@ export class ArticleForm extends React.Component {
             <ProFormSelect
               name='origin'
               label='文章类型'
-              valueEnum={{
-                0: '原创',
-                1: '转载',
-                2: '混合',
-              }}
+              options={[
+                { label: '原创', value: 0 },
+                { label: '转载', value: 1 },
+                { label: '混合', value: 2 },
+              ]}
               placeholder='选择文章转载状态'
               rules={[{ required: true, message: '选择文章转载状态' }]}
             />

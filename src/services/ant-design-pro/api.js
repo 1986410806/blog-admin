@@ -284,10 +284,11 @@ export async function updateArticle(params) {
       'Content-Type': 'application/json',
     },
     data: params,
+    ...(options || {}),
   });
 }
 
-export async function getArticleDetail(params,options) {
+export async function getArticleDetail(params, options) {
   return await request('/api/getArticleDetail', {
     method: 'POST',
     headers: {

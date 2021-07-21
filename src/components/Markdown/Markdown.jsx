@@ -128,6 +128,10 @@ class FromMarkdown extends React.Component {
     return this.vditor.getValue();
   }
 
+  setMarkdownValue(val) {
+    return this.vditor.setValue(val);
+  }
+
 
   render() {
     return (<div id='vditor' />);
