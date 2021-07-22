@@ -1,4 +1,4 @@
-import { Card, message } from 'antd';
+import { Button, Card, message } from 'antd';
 import ProForm, { ProFormSelect, ProFormText } from '@ant-design/pro-form';
 
 import { PageContainer } from '@ant-design/pro-layout';
@@ -50,13 +50,13 @@ const ArticleUpdate = async (fields) => {
   try {
     await updateArticle({ ...fields });
     hide();
-    message.success('添加成功');
+    message.success('更新成功');
     history.push('/article/list');
     return true;
   } catch (error) {
     hide();
     console.error(error);
-    message.error('添加失败请重试！');
+    message.error('更新失败请重试！');
     return false;
   }
 };
@@ -152,12 +152,12 @@ export class ArticleForm extends React.Component {
   render() {
 
     const submit = (values) => {
-      let content = getContent();
+      let content = this.getContent();
       if (content.length <= 1) {
         message.error('正文必须填~~');
         return false;
       }
-      values.content = getContent();
+      values.content = this.getContent();
 
       this.aId === 0 ?
         ArticleCreate(values) : // 新增
@@ -176,15 +176,29 @@ export class ArticleForm extends React.Component {
             layout='vertical'
             formRef={this.formRef}
             onFinish={submit}
+            // submitter={{
+            //   render :(props, doms) =>{
+            //
+            //      return [
+            //
+            //        <Button type="primary" onClick={() => {
+            //          console.log(this.formRef?.current?.getFieldValue())
+            //        }}> 提交 </Button>
+            //      ]
+            //   }
+            // }}
+
           >
 
             {/* 判断时候更新*/}
-            {this.aId > 0 &&
+            {this.aId !== 0 &&
             <ProFormText
               width='md'
               label='ID'
               readonly
               name='id'
+              fieldProps={{onkeydown:(e)=> e.preventDefault(e)}}
+
             />
             }
 
@@ -200,7 +214,35 @@ export class ArticleForm extends React.Component {
                 },
               ]}
               placeholder='文章标题'
+              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
             />
+
+            <label> 正文 </label>
+            <br />
+            <ProForm.Item >
+              <Markdown
+                bindMarkDownThis={this.bindMarkDownThis}
+                value={this.props.values?.content || ''} />
+            </ProForm.Item>
+
+            <br />
+            <br />
+
+            <ProFormText
+              width='xl'
+              label='封面图'
+              name='img_url'
+              rules={[
+                {
+                  required: true,
+                  message: '封面不能为空',
+                },
+              ]}
+              placeholder='封面图'
+              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+
+            />
+
             <ProFormText
               width='md'
               label='作者'
@@ -212,6 +254,8 @@ export class ArticleForm extends React.Component {
                 },
               ]}
               placeholder='作者名字'
+              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+
             />
             <ProFormText
               width='md'
@@ -224,6 +268,8 @@ export class ArticleForm extends React.Component {
                 },
               ]}
               placeholder='关键字（seo检索）'
+              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+
             />
             <ProFormText
               width='md'
@@ -236,18 +282,7 @@ export class ArticleForm extends React.Component {
                 },
               ]}
               placeholder='关键字（seo检索）'
-            />
-            <ProFormText
-              width='xl'
-              label='封面图'
-              name='img_url'
-              rules={[
-                {
-                  required: true,
-                  message: '封面不能为空',
-                },
-              ]}
-              placeholder='封面图'
+              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
             />
 
 
@@ -314,16 +349,10 @@ export class ArticleForm extends React.Component {
               request={getCategory}
               rules={[{ required: true, message: '请选择文章分类' }]}
             />
-            <label> 正文 </label>
-            <br />
-            <Markdown
-              bindMarkDownThis={this.bindMarkDownThis}
-              value={this.props.values?.content || ''} />
-            <br />
-            <br />
-
           </ProForm>
         </Card>
+
+
       </PageContainer>
     );
   }

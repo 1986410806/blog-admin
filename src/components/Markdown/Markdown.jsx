@@ -14,7 +14,7 @@ class FromMarkdown extends React.Component {
     let value = this.props?.value;
     value = value || '';
     const vditor = new Vditor('vditor', {
-      height: 300,
+      height: 1200,
       mode: 'ir', // 及时渲染模式
       placeholder: 'MarkDown edit',
       toolbar: [
@@ -112,6 +112,12 @@ class FromMarkdown extends React.Component {
           }
 
           // that.handleImageUpload(files, callback);
+        },
+        input(v) {
+          console.log(v);
+        },
+        enter() {
+          console.log(v);
         },
         url(files) {
           // that.handleImageUpload(files);

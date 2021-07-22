@@ -1,11 +1,11 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Popconfirm } from 'antd';
 import React, { useState, useRef, Fragment } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import UpdateForm from './components/UpdateForm';
 
-import { queryTag, addTag } from '@/services/ant-design-pro/api';
+import { queryTag, addTag, delTag } from '@/services/ant-design-pro/api';
 
 
 const getList = async (params) => {
@@ -71,19 +71,19 @@ const handleUpdate = async (fields) => {
  * @param
  */
 
-const handleRemove = async (text,record) => {
+const handleRemove = async (text) => {
   const hide = message.loading('正在删除');
-  if (!text) return true;
 
   try {
     await delTag({
-      id: record._id,
+      id: text._id,
     });
     hide();
     message.success('删除成功，即将刷新');
     return true;
   } catch (error) {
     hide();
+    console.error(error);
     message.error('删除失败，请重试');
     return false;
   }
@@ -96,7 +96,6 @@ const TableList = () => {
   /** 分布更新窗口的弹窗 */
 
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
   const actionRef = useRef();
   const [currentRow, setCurrentRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
@@ -129,10 +128,13 @@ const TableList = () => {
     },
     {
       title: '操作',
-      render: (text, record) => (
+      render: (text) => (
         <Fragment>
-          <Popconfirm title='Sure to delete?' onConfirm={() => handleRemove(text, record)}>
-            <a href='#'>Delete</a>
+          <Popconfirm title='Sure to delete?' onConfirm={() => {
+            handleRemove(text);
+            actionRef.current.reload();
+          }}>
+            <Button type='dashed' size='small'> <DeleteOutlined /> 删除</Button>
           </Popconfirm>
         </Fragment>
       ),
@@ -172,7 +174,6 @@ const TableList = () => {
       <UpdateForm
         title='新增标签'
         onSubmit={async (value) => {
-          console.log(value);
           const success = await handleAdd(value);
 
           if (success) {

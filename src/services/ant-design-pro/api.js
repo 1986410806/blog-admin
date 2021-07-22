@@ -277,7 +277,7 @@ export async function delArticle(params) {
   });
 }
 
-export async function updateArticle(params) {
+export async function updateArticle(params, options) {
   return request('/api/updateArticle', {
     method: 'POST',
     headers: {
@@ -430,13 +430,14 @@ export async function addTag(params, options) {
   });
 }
 
-export async function delTag(params) {
+export async function delTag(params, options) {
   return request('/api/delTag', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     data: params,
+    ...options || {},
   });
 }
 
