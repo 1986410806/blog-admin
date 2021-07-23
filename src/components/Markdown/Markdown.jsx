@@ -137,10 +137,12 @@ class FromMarkdown extends React.Component {
   setMarkdownValue(val) {
     return this.vditor.setValue(val);
   }
-
+  keypress(e){
+    e.stopPropagation()
+  }
 
   render() {
-    return (<div id='vditor' />);
+    return (<div onKeyPress = {e=>{e.stopPropagation()}} id='vditor' />);
   }
 }
 
