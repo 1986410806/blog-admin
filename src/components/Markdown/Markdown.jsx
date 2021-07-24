@@ -1,6 +1,5 @@
 import React from 'react';
 
-import ProFormTextArea from '@ant-design/pro-form';
 import Vditor from 'vditor';
 import 'vditor/src/assets/scss/index.scss';
 
