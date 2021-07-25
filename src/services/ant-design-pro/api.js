@@ -520,3 +520,9 @@ export async function queryNotices() {
 export async function getFakeCaptcha(mobile) {
   return request(`/api/captcha?mobile=${mobile}`);
 }
+
+export async function getQiniuToken() {
+  return request(`/api/qiniu/getToken`, {
+    method: 'GET',
+  });
+}

@@ -1,10 +1,11 @@
 import { Button, Card, message } from 'antd';
-import ProForm, { ProFormSelect, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ProFormSelect, ProFormText,ProFormUploadButton } from '@ant-design/pro-form';
 
 import { PageContainer } from '@ant-design/pro-layout';
 import { addArticle, queryTag, queryCategory, getArticleDetail, updateArticle } from '@/services/ant-design-pro/api';
 import { history } from 'umi';
-
+import { getQiniuToken as getQiniuTokenService } from '@/services/ant-design-pro/api';
+import { upload } from '@/util/qiniu';
 import Markdown from '../../../components/Markdown/Markdown';
 import React from 'react';
 
@@ -115,6 +116,17 @@ export class ArticleForm extends React.Component {
 
   formRef = React.createRef();
 
+  qiniuToken;
+
+  getQiniuToken = async () => {
+    if (!this.qiniuToken) {
+      const token = await getQiniuTokenService();
+      this.qiniuToken = token.data;
+    }
+    return this.qiniuToken;
+
+  };
+
   componentDidMount = () => {
     if (this.aId) {
       getArticle(this.aId).then(res => {
@@ -176,17 +188,6 @@ export class ArticleForm extends React.Component {
             layout='vertical'
             formRef={this.formRef}
             onFinish={submit}
-            // submitter={{
-            //   render :(props, doms) =>{
-            //
-            //      return [
-            //
-            //        <Button type="primary" onClick={() => {
-            //          console.log(this.formRef?.current?.getFieldValue())
-            //        }}> 提交 </Button>
-            //      ]
-            //   }
-            // }}
 
           >
 
@@ -197,7 +198,7 @@ export class ArticleForm extends React.Component {
               label='ID'
               readonly
               name='id'
-              fieldProps={{onkeydown:(e)=> e.preventDefault(e)}}
+              fieldProps={{ onkeydown: (e) => e.preventDefault(e) }}
 
             />
             }
@@ -217,20 +218,30 @@ export class ArticleForm extends React.Component {
               fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
             />
 
-            <label> 正文 </label>
-            <br />
-            <ProForm.Item >
+            <ProForm.Item label="正文">
               <Markdown
                 bindMarkDownThis={this.bindMarkDownThis}
+                getQiniuToken={this.getQiniuToken}
                 value={this.props.values?.content || ''} />
             </ProForm.Item>
 
-            <br />
-            <br />
-
+            <ProFormUploadButton
+              name="upload"
+              label="封面图"
+              max={1}
+              fieldProps={{
+                name: 'file',
+                listType: 'picture-card',
+              }}
+              action={async (file)=>{
+               const token = await this.getQiniuToken()
+                upload(file,token)
+              }}
+              extra="点击上传"
+            />
             <ProFormText
               width='xl'
-              label='封面图'
+              label=''
               name='img_url'
               rules={[
                 {

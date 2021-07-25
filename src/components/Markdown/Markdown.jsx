@@ -2,16 +2,23 @@ import React from 'react';
 
 import Vditor from 'vditor';
 import 'vditor/src/assets/scss/index.scss';
+import { upload } from '../../util/qiniu';
+import { getQiniuToken as getQiniuTokenService } from '@/services/ant-design-pro/api';
+
 
 class FromMarkdown extends React.Component {
   constructor(props) {
     super(props);
   }
 
+  qiniuToken = '';
+
   componentDidMount = () => {
     // 组件挂载完成之后调用 注意一定要在组件挂载完成之后调用 否则会找不到注入的DOM
     let value = this.props?.value;
     value = value || '';
+
+    const that = this;
     const vditor = new Vditor('vditor', {
       height: 1200,
       mode: 'ir', // 及时渲染模式
@@ -98,8 +105,9 @@ class FromMarkdown extends React.Component {
             .replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '')
             .replace('/\\s/g', '');
         },
-        handler(files) {
-          function callback(path) {
+        async handler(files) {
+          const token = await that.getQiniuToken();
+          upload(files[0], token, (path) => {
             const name = files[0] && files[0].name;
             let succFileText = '';
             if (vditor && vditor.vditor.currentMode === 'wysiwyg') {
@@ -108,17 +116,10 @@ class FromMarkdown extends React.Component {
               succFileText += `  \n![${name}](${path})`;
             }
             document.execCommand('insertHTML', false, succFileText);
-          }
-
-          // that.handleImageUpload(files, callback);
+          });
         },
-        input(v) {
-          console.log(v);
-        },
-        enter() {
-          console.log(v);
-        },
-        url(files) {
+        url(files) { // 复制图片地址事件 需要现下载在上传
+          console.log('url', files);
           // that.handleImageUpload(files);
         },
       },
@@ -129,6 +130,22 @@ class FromMarkdown extends React.Component {
     this.props.bindMarkDownThis(this);
   };
 
+
+  async getQiniuToken() {
+
+    // 优先使用父组件的token
+    if (this.props?.getQiniuToken) {
+      return this.props.getQiniuToken();
+    }
+
+    if (!this.qiniuToken) {
+      const token = await getQiniuTokenService();
+      this.qiniuToken = token.data;
+    }
+    return this.qiniuToken;
+
+  }
+
   getMarkdownValue() {
     return this.vditor.getValue();
   }
@@ -136,12 +153,15 @@ class FromMarkdown extends React.Component {
   setMarkdownValue(val) {
     return this.vditor.setValue(val);
   }
-  keypress(e){
-    e.stopPropagation()
+
+  keypress(e) {
+    e.stopPropagation();
   }
 
   render() {
-    return (<div onKeyPress = {e=>{e.stopPropagation()}} id='vditor' />);
+    return (<div onKeyPress={e => {
+      e.stopPropagation();
+    }} id='vditor' />);
   }
 }
 
