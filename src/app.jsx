@@ -22,6 +22,9 @@ export async function getInitialState() {
   const fetchUserInfo = async () => {
     try {
       const currentUser = await queryCurrentUser();
+      if (currentUser.code == 1) {
+        history.push(loginPath);
+      }
       return currentUser.data;
     } catch (error) {
       history.push(loginPath);
