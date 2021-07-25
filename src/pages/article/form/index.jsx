@@ -1,5 +1,5 @@
 import { Button, Card, message } from 'antd';
-import ProForm, { ProFormSelect, ProFormText,ProFormUploadButton } from '@ant-design/pro-form';
+import ProForm, { ProFormSelect, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
 
 import { PageContainer } from '@ant-design/pro-layout';
 import { addArticle, queryTag, queryCategory, getArticleDetail, updateArticle } from '@/services/ant-design-pro/api';
@@ -151,6 +151,13 @@ export class ArticleForm extends React.Component {
       });
     }
   };
+
+  setImgUrl = (path) => {
+    this.formRef?.current?.setFieldsValue({
+      img_url: path,
+    });
+  };
+
   bindMarkDownThis = (markdown) => {
     this.markdownThis = markdown;
   };
@@ -218,7 +225,7 @@ export class ArticleForm extends React.Component {
               fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
             />
 
-            <ProForm.Item label="正文">
+            <ProForm.Item label='正文'>
               <Markdown
                 bindMarkDownThis={this.bindMarkDownThis}
                 getQiniuToken={this.getQiniuToken}
@@ -226,33 +233,32 @@ export class ArticleForm extends React.Component {
             </ProForm.Item>
 
             <ProFormUploadButton
-              name="upload"
-              label="封面图"
+              label='封面图'
               max={1}
               fieldProps={{
-                name: 'file',
+                width:"lg",
                 listType: 'picture-card',
               }}
-              action={async (file)=>{
-               const token = await this.getQiniuToken()
-                upload(file,token)
+              action={async (file) => {
+                const token = await this.getQiniuToken();
+                upload(file, token, this.setImgUrl);
               }}
-              extra="点击上传"
+              // extra={<ProFormText
+              //   width='xl'
+              //   label='URL'
+              //   readonly
+              //   name='img_url'
+              //   rules={[
+              //     {
+              //       required: true,
+              //       message: '封面不能为空',
+              //     },
+              //   ]}
+              //   placeholder='封面图'
+              //   fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+              // />}
             />
-            <ProFormText
-              width='xl'
-              label=''
-              name='img_url'
-              rules={[
-                {
-                  required: true,
-                  message: '封面不能为空',
-                },
-              ]}
-              placeholder='封面图'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
 
-            />
 
             <ProFormText
               width='md'

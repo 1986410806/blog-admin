@@ -14,7 +14,6 @@ export const raundKey = () => {
 
 
 export const upload = async (files, token, callback) => {
-  console.log()
   const observable = qiniu.upload(files, raundKey() + '.jpg', token, {}, {});
   const subscription = observable.subscribe({
     next(res) {
