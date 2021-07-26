@@ -9,7 +9,7 @@ const Settings = {
   colorWeak: false,
   title: '王富贵的BLOG',
   pwa: false,
-  logo: '/public/logo.svg',
+  logo: '/logo.svg',
   iconfontUrl: '//at.alicdn.com/t/font_2685779_eih055jxsx.js',
 };
 export default Settings;

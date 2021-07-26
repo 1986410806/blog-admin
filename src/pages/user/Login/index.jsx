@@ -89,13 +89,11 @@ const Login = () => {
           <div className={styles.header}>
             <Link to='/'>
               <img alt='logo' className={styles.logo} src='/logo.svg' />
-              <span className={styles.title}>Ant Design</span>
+              <span className={styles.title}>王富貴的BLOG后台登录</span>
             </Link>
           </div>
           <div className={styles.desc}>
-            {intl.formatMessage({
-              id: 'pages.layouts.userLayout.title',
-            })}
+            快乐code
           </div>
         </div>
 
