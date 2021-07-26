@@ -211,29 +211,30 @@ export class ArticleForm extends React.Component {
             }
 
 
-            <ProFormText
-              width='md'
-              label='标题'
-              name='title'
-              rules={[
-                {
-                  required: true,
-                  message: '请输入标题',
-                },
-              ]}
-              placeholder='文章标题'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
-            />
+            {/*<ProFormText*/}
+            {/*  width='md'*/}
+            {/*  label='标题'*/}
+            {/*  name='title'*/}
+            {/*  rules={[*/}
+            {/*    {*/}
+            {/*      required: true,*/}
+            {/*      message: '请输入标题',*/}
+            {/*    },*/}
+            {/*  ]}*/}
+            {/*  placeholder='文章标题'*/}
+            {/*  fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}*/}
+            {/*/>*/}
 
-            <ProForm.Item label='正文'>
-              <Markdown
-                bindMarkDownThis={this.bindMarkDownThis}
-                getQiniuToken={this.getQiniuToken}
-                value={this.props.values?.content || ''} />
-            </ProForm.Item>
+            {/*<ProForm.Item label='正文'>*/}
+            {/*  <Markdown*/}
+            {/*    bindMarkDownThis={this.bindMarkDownThis}*/}
+            {/*    getQiniuToken={this.getQiniuToken}*/}
+            {/*    value={this.props.values?.content || ''} />*/}
+            {/*</ProForm.Item>*/}
 
             <ProFormUploadButton
               label='封面图'
+              name="img_url"
               max={1}
               fieldProps={{
                 width:"lg",
@@ -260,112 +261,112 @@ export class ArticleForm extends React.Component {
             />
 
 
-            <ProFormText
-              width='md'
-              label='作者'
-              name='author'
-              rules={[
-                {
-                  required: true,
-                  message: '请输入作者',
-                },
-              ]}
-              placeholder='作者名字'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+            {/*<ProFormText*/}
+            {/*  width='md'*/}
+            {/*  label='作者'*/}
+            {/*  name='author'*/}
+            {/*  rules={[*/}
+            {/*    {*/}
+            {/*      required: true,*/}
+            {/*      message: '请输入作者',*/}
+            {/*    },*/}
+            {/*  ]}*/}
+            {/*  placeholder='作者名字'*/}
+            {/*  fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}*/}
 
-            />
-            <ProFormText
-              width='md'
-              label='关键字'
-              name='keyword'
-              rules={[
-                {
-                  required: true,
-                  message: '关键字不能为空',
-                },
-              ]}
-              placeholder='关键字（seo检索）'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+            {/*/>*/}
+            {/*<ProFormText*/}
+            {/*  width='md'*/}
+            {/*  label='关键字'*/}
+            {/*  name='keyword'*/}
+            {/*  rules={[*/}
+            {/*    {*/}
+            {/*      required: true,*/}
+            {/*      message: '关键字不能为空',*/}
+            {/*    },*/}
+            {/*  ]}*/}
+            {/*  placeholder='关键字（seo检索）'*/}
+            {/*  fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}*/}
 
-            />
-            <ProFormText
-              width='md'
-              label='描述'
-              name='desc'
-              rules={[
-                {
-                  required: true,
-                  message: '关键字不能为空',
-                },
-              ]}
-              placeholder='关键字（seo检索）'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
-            />
+            {/*/>*/}
+            {/*<ProFormText*/}
+            {/*  width='md'*/}
+            {/*  label='描述'*/}
+            {/*  name='desc'*/}
+            {/*  rules={[*/}
+            {/*    {*/}
+            {/*      required: true,*/}
+            {/*      message: '关键字不能为空',*/}
+            {/*    },*/}
+            {/*  ]}*/}
+            {/*  placeholder='关键字（seo检索）'*/}
+            {/*  fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}*/}
+            {/*/>*/}
 
 
-            <ProFormSelect
-              name='state'
-              label='发布状态'
-              options={[
-                { value: 0, label: '草稿' },
-                { value: 1, label: '发布' },
-              ]}
-              placeholder='选择发布状态'
-              rules={[{ required: true, message: '请选择发布状态' }]}
-            />
+            {/*<ProFormSelect*/}
+            {/*  name='state'*/}
+            {/*  label='发布状态'*/}
+            {/*  options={[*/}
+            {/*    { value: 0, label: '草稿' },*/}
+            {/*    { value: 1, label: '发布' },*/}
+            {/*  ]}*/}
+            {/*  placeholder='选择发布状态'*/}
+            {/*  rules={[{ required: true, message: '请选择发布状态' }]}*/}
+            {/*/>*/}
 
-            <ProFormSelect
-              name='type'
-              label='文章类型'
-              options={[
-                {
-                  label: '普通文章', value: 1,
-                },
-                {
-                  label: '简历', value: 2,
-                },
-                {
-                  label: '管理员介绍', value: 3,
-                },
+            {/*<ProFormSelect*/}
+            {/*  name='type'*/}
+            {/*  label='文章类型'*/}
+            {/*  options={[*/}
+            {/*    {*/}
+            {/*      label: '普通文章', value: 1,*/}
+            {/*    },*/}
+            {/*    {*/}
+            {/*      label: '简历', value: 2,*/}
+            {/*    },*/}
+            {/*    {*/}
+            {/*      label: '管理员介绍', value: 3,*/}
+            {/*    },*/}
 
-              ]}
-              placeholder='请选择发布状态'
-              rules={[{ required: true, message: '请选择发布状态' }]}
-            />
+            {/*  ]}*/}
+            {/*  placeholder='请选择发布状态'*/}
+            {/*  rules={[{ required: true, message: '请选择发布状态' }]}*/}
+            {/*/>*/}
 
-            <ProFormSelect
-              name='origin'
-              label='文章类型'
-              options={[
-                { label: '原创', value: 0 },
-                { label: '转载', value: 1 },
-                { label: '混合', value: 2 },
-              ]}
-              placeholder='选择文章转载状态'
-              rules={[{ required: true, message: '选择文章转载状态' }]}
-            />
+            {/*<ProFormSelect*/}
+            {/*  name='origin'*/}
+            {/*  label='文章类型'*/}
+            {/*  options={[*/}
+            {/*    { label: '原创', value: 0 },*/}
+            {/*    { label: '转载', value: 1 },*/}
+            {/*    { label: '混合', value: 2 },*/}
+            {/*  ]}*/}
+            {/*  placeholder='选择文章转载状态'*/}
+            {/*  rules={[{ required: true, message: '选择文章转载状态' }]}*/}
+            {/*/>*/}
 
-            <ProFormSelect.SearchSelect
-              name='tags'
-              label='标签选项'
-              fieldProps={{
-                labelInValue: false,
-              }}
+            {/*<ProFormSelect.SearchSelect*/}
+            {/*  name='tags'*/}
+            {/*  label='标签选项'*/}
+            {/*  fieldProps={{*/}
+            {/*    labelInValue: false,*/}
+            {/*  }}*/}
 
-              request={getTags}
+            {/*  request={getTags}*/}
 
-              rules={[{ required: true, message: '请选择标签' }]}
-            />
+            {/*  rules={[{ required: true, message: '请选择标签' }]}*/}
+            {/*/>*/}
 
-            <ProFormSelect.SearchSelect
-              name='category'
-              label='文章分类'
-              fieldProps={{
-                labelInValue: false,
-              }}
-              request={getCategory}
-              rules={[{ required: true, message: '请选择文章分类' }]}
-            />
+            {/*<ProFormSelect.SearchSelect*/}
+            {/*  name='category'*/}
+            {/*  label='文章分类'*/}
+            {/*  fieldProps={{*/}
+            {/*    labelInValue: false,*/}
+            {/*  }}*/}
+            {/*  request={getCategory}*/}
+            {/*  rules={[{ required: true, message: '请选择文章分类' }]}*/}
+            {/*/>*/}
           </ProForm>
         </Card>
 

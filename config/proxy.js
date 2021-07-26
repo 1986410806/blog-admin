@@ -27,7 +27,7 @@ export default {
   },
   pre: {
     '/api/': {
-      target: 'http://localhost:3000',
+      target: 'http://1.15.43.122:3000',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '',
