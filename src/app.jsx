@@ -22,9 +22,6 @@ export async function getInitialState() {
   const fetchUserInfo = async () => {
     try {
       const currentUser = await queryCurrentUser();
-      if (currentUser.code == 1) {
-        history.push(loginPath);
-      }
       return currentUser.data;
     } catch (error) {
       history.push(loginPath);
@@ -116,18 +113,6 @@ export const layout = ({ initialState }) => {
         history.push(loginPath);
       }
     },
-    links: isDev
-      ? [
-        <Link to='/umi/plugin/openapi' target='_blank'>
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-        <Link to='/~docs'>
-          <BookOutlined />
-          <span>业务组件文档</span>
-        </Link>,
-      ]
-      : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
