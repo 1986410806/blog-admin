@@ -7,7 +7,7 @@ export default [
         path: '/user/login',
         layout: false,
         name: 'login',
-        component: './user/Login',
+        component: './User/Login',
       },
       {
         path: '/user',
@@ -21,7 +21,7 @@ export default [
   {
     path: '/dashboard',
     name: 'dashboard',
-    icon: 'icon-shuju1',
+    icon: 'dashboard',
     routes: [
       {
         name: 'analysis',
@@ -45,7 +45,7 @@ export default [
   },
   {
     path: '/article',
-    icon: 'icon-shu',
+    icon: 'table',
     name: 'article',
     routes: [
       {
@@ -69,10 +69,6 @@ export default [
         icon: 'MenuOutlined',
         path: '/article/category',
         component: './category',
-      },
-      { // 编辑
-        path: '/article/edit/:id',
-        component: './article/form',
       },
     ],
   },

@@ -72,7 +72,6 @@
     "numeral": "^2.0.6",
     "nzh": "^1.0.3",
     "omit.js": "^2.0.2",
-    "qiniu-js": "^3.3.3",
     "react": "^17.0.0",
     "react-dev-inspector": "^1.1.1",
     "react-dom": "^17.0.0",
@@ -97,7 +96,6 @@
     "@umijs/openapi": "^1.1.14",
     "@umijs/plugin-blocks": "^2.0.5",
     "@umijs/plugin-esbuild": "^1.0.1",
-    "@umijs/plugin-openapi": "^1.2.0",
     "@umijs/preset-ant-design-pro": "^1.2.0",
     "@umijs/preset-dumi": "^1.1.7",
     "@umijs/preset-react": "^1.7.4",
@@ -120,5 +118,6 @@
   },
   "engines": {
     "node": ">=10.0.0"
-  }
+  },
+  "gitHooks": {}
 }

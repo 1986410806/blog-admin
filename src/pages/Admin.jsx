@@ -10,7 +10,7 @@ export default () => {
     <PageHeaderWrapper
       content={intl.formatMessage({
         id: 'pages.admin.subPage.title',
-        defaultMessage: 'ADMIN',
+        defaultMessage: 'This page can only be viewed by admin',
       })}
     >
       <Card>
