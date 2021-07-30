@@ -27,7 +27,7 @@ export default {
   },
   pre: {
     '/api/': {
-      target: 'http://localhost:3000',
+      target: 'http://api.wfg6.cc',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '',
