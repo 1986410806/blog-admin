@@ -5,12 +5,12 @@ import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import UpdateForm from './components/UpdateForm';
 
-import { queryCategory, addCategory, delCategory } from '@/services/ant-design-pro/api';
+import { queryProject,delProject } from '../../services/ant-design-pro/api';
 
 
 const getList = async (params) => {
   try {
-    const list = await queryCategory(params);
+    const list = await queryProject(params);
     return {
       total: list.data.count,
       data: list.data.list,
@@ -31,7 +31,7 @@ const handleAdd = async (fields) => {
   const hide = message.loading('正在添加');
 
   try {
-    await addCategory(fields);
+    await addTag(fields);
     hide();
     message.success('添加成功');
     return true;
@@ -68,17 +68,14 @@ const handleUpdate = async (fields) => {
 /**
  * 删除
  *
- * @param text,
- * @param record
- * @return bool
+ * @param
  */
 
 const handleRemove = async (text) => {
   const hide = message.loading('正在删除');
-  if (!text) return true;
 
   try {
-    await delCategory({
+    await delProject({
       id: text._id,
     });
     hide();
@@ -86,6 +83,7 @@ const handleRemove = async (text) => {
     return true;
   } catch (error) {
     hide();
+    console.error(error);
     message.error('删除失败，请重试');
     return false;
   }
@@ -98,7 +96,6 @@ const TableList = () => {
   /** 分布更新窗口的弹窗 */
 
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
   const actionRef = useRef();
   const [currentRow, setCurrentRow] = useState();
   const [selectedRowsState, setSelectedRows] = useState([]);
@@ -107,34 +104,67 @@ const TableList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: '_id',
+      title: '标题',
+      width: 150,
+      dataIndex: 'title',
     },
     {
-      title: '分类名',
-      dataIndex: 'name',
+      title: '内容',
+      width: 350,
+      dataIndex: 'content',
     },
     {
-      title: '描述',
-      dataIndex: 'desc',
+      title: 'url',
+      width: 100,
+      dataIndex: 'url',
     },
     {
-      title: '创建时间',
-      dataIndex: 'create_time',
+      title: '封面图',
+      width: 50,
+      dataIndex: 'img',
+      render: val => <Avatar shape="square" src={val} size={40} icon="user" />,
+    },
+    {
+      title: '状态',
+      dataIndex: 'state', // 状态 1 是已经完成 ，2 是正在进行，3 是没完成
+      render: val => {
+        // 状态 1 是已经完成 ，2 是正在进行，3 是没完成
+        if (val === 1) {
+          return <Tag color="green">已经完成</Tag>;
+        }
+        if (val === 2) {
+          return <Tag color="red">正在进行</Tag>;
+        }
+        return <Tag>没完成</Tag>;
+      },
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'start_time',
+      valueType: 'datetime',
       sorter: true,
-      valueType:"datetime"
+    },
+    {
+      title: '结束时间',
+      dataIndex: 'end_time',
+      sorter: true,
+      valueType: 'datetime',
     },
     {
       title: '操作',
+      width: 150,
       render: (text, record) => (
-        <Fragment>
+        <div>
+          <Fragment>
+            <a onClick={() => this.showModal(record)}>修改</a>
+          </Fragment>
           <Popconfirm title='Sure to delete?' onConfirm={() => {
             handleRemove(text);
             actionRef.current.reload();
           }}>
             <Button type='dashed' size='small'> <DeleteOutlined /> 删除</Button>
           </Popconfirm>
-        </Fragment>
+        </div>
       ),
     },
   ];
@@ -170,7 +200,6 @@ const TableList = () => {
       <UpdateForm
         title='新增标签'
         onSubmit={async (value) => {
-          console.log(value);
           const success = await handleAdd(value);
 
           if (success) {

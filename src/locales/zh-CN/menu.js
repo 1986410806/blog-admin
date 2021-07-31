@@ -1,5 +1,6 @@
 export default {
   'menu.welcome': '欢迎',
+  'menu.user-list': '用戶管理',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.admin': '管理页',
@@ -45,6 +46,7 @@ export default {
   'menu.account.settings': '个人设置',
   'menu.account.trigger': '触发报错',
   'menu.account.logout': '退出登录',
+  'menu.account.list': '用戶管理',
   'menu.editor': '图形编辑器',
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
@@ -54,4 +56,5 @@ export default {
   'menu.article.form': '开始创作',
   'menu.article.tags': '标签',
   'menu.article.category': '栏目',
+  'menu.project': '項目管理',
 };

@@ -7,9 +7,9 @@ const Settings = {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Ant Design Pro',
+  title: '王富贵的BLOG',
   pwa: false,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-  iconfontUrl: '',
+  logo: '/logo.svg',
+  iconfontUrl: '//at.alicdn.com/t/font_2685779_eih055jxsx.js',
 };
 export default Settings;

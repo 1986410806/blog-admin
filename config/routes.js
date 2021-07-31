@@ -18,6 +18,7 @@ export default [
       },
     ],
   },
+
   {
     path: '/dashboard',
     name: 'dashboard',
@@ -42,6 +43,12 @@ export default [
         component: './dashboard/workplace',
       },
     ],
+  },
+  {
+    path: '/users',
+    icon: 'UsergroupAdd',
+    name: 'user-list',
+    component: './user/list',
   },
   {
     path: '/article',
@@ -77,25 +84,6 @@ export default [
     ],
   },
   {
-    path: '/profile',
-    name: 'profile',
-    icon: 'profile',
-    routes: [
-      {
-        name: 'basic',
-        icon: 'smile',
-        path: '/profile/basic',
-        component: './profile/basic',
-      },
-      {
-        name: 'advanced',
-        icon: 'smile',
-        path: '/profile/advanced',
-        component: './profile/advanced',
-      },
-    ],
-  },
-  {
     name: 'result',
     icon: 'CheckCircleOutlined',
     path: '/result',
@@ -113,6 +101,25 @@ export default [
         component: './result/fail',
       },
     ],
+  },
+  // {
+  //   name: 'message',
+  //   icon: 'message',
+  //   path: '/result',
+  //   routes: [
+  //     {
+  //       name: 'success',
+  //       icon: 'smile',
+  //       path: '/result/success',
+  //       component: './result/success',
+  //     },
+  //   ]
+  // },
+  {
+    path: '/project',
+    name: 'project',
+    icon: 'ProjectOutlined',
+    component: './project',
   },
   {
     name: 'account',
