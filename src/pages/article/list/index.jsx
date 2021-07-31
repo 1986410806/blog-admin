@@ -1,14 +1,10 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Drawer, Avatar,Tag } from 'antd';
-import React, { useState, useRef } from 'react';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, message, Tag, Image, Space, Popconfirm } from 'antd';
+import React, { useRef } from 'react';
+import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
-import ProDescriptions from '@ant-design/pro-descriptions';
-import UpdateForm from './components/UpdateForm';
-import { addRule, updateRule, removeRule } from './service';
-import { queryArticle } from '@/services/ant-design-pro/api';
-
+import { queryArticle, delArticle } from '@/services/ant-design-pro/api';
+import { history } from 'umi';
 
 const getList = async (pageSize, current) => {
   try {
@@ -24,100 +20,33 @@ const getList = async (pageSize, current) => {
   }
 };
 
-/**
- * 添加节点
- *
- * @param fields
- */
-const handleAdd = async (fields) => {
+const articleDel = async (param) => {
   const hide = message.loading('正在添加');
 
   try {
-    await addRule({ ...fields });
+    await delArticle(param);
     hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
+    message.info('删除成功');
+  } catch (e) {
     hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-/**
- * 更新节点
- *
- * @param fields
- */
-
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-/**
- * 删除节点
- *
- * @param selectedRows
- */
-
-const handleRemove = async (selectedRows) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-
-  try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
+    console.error(e);
+    message.error(e.msg);
   }
 };
 
 const TableList = () => {
-  /** 新建窗口的弹窗 */
-  const [createModalVisible, handleModalVisible] = useState(false);
-  /** 分布更新窗口的弹窗 */
 
-  const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
-  const actionRef = useRef();
-  const [currentRow, setCurrentRow] = useState();
-  const [selectedRowsState, setSelectedRows] = useState([]);
   /** 国际化配置 */
-
+  const actionRef = useRef();
   const columns = [
     {
       title: '标题',
       dataIndex: 'title',
-      tip: '规则名称是唯一的 key',
-      render: (dom, entity) => {
+      tip: '可跳转去博客详情页',
+      key: 'title',
+      render: (val) => {
         return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
+          <a key='1'>{val}</a>
         );
       },
     },
@@ -125,14 +54,16 @@ const TableList = () => {
       title: '作者',
       dataIndex: 'author',
       valueType: 'text',
+      key: 'author',
     },
     {
       title: '关键字',
       dataIndex: 'keyword',
       sorter: true,
       hideInForm: true,
+      key: 'keyword',
       render: arr => (
-        <span>
+        <span key={arr}>
               {arr.map(item => (
                 <span color='magenta' key={item}>
                   {item}
@@ -144,20 +75,26 @@ const TableList = () => {
     {
       title: '封面图',
       dataIndex: 'img_url',
-      render: val => <Avatar shape='square' src={val} size={40} icon='user' />,
+      key: 'img_url',
+      render: val => <Image shape='square' src={val} key={val} width={100} preview={{
+        src: val,
+      }}
+                            fallback='data:image/png;base64,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'
+      />,
     }
     ,
     {
       title: '标签',
       dataIndex: 'tags',
+      key: 'tags',
       render: arr => (
-        <span>
+        <span key={1}>
               {
                 arr.map(item => (
-                <Tag color='cyan' key={item.id}>
-                  {item.name}
-                </Tag>
-              ))
+                  <Tag color='cyan' key={item.id}>
+                    {item.name}
+                  </Tag>
+                ))
               }
       </span>
       ),
@@ -165,9 +102,10 @@ const TableList = () => {
     {
       title: '分类',
       dataIndex: 'category',
+      key: 'category',
       width: 70,
       render: arr => (
-        <span>
+        <span key={2}>
               {arr.map(item => (
                 <Tag color='blue' key={item.id}>
                   {item.name}
@@ -179,20 +117,23 @@ const TableList = () => {
     {
       title: '状态',
       dataIndex: 'state',
+      key: 'state',
       width: 70,
       render: val => {
         // 文章发布状态 => 0 草稿，1 已发布
         if (val === 0) {
-          return <Tag color='red'>草稿</Tag>;
+          return <Tag color='red' key={val}>草稿</Tag>;
         }
         if (val === 1) {
-          return <Tag color='green'>已发布</Tag>;
+          return <Tag color='green' key={val}>已发布</Tag>;
         }
       },
     },
     {
       title: '评论是否处理过',
       dataIndex: 'comments',
+      key: 'comments',
+
       width: 50,
       render: comments => {
         let flag = 1;
@@ -204,196 +145,86 @@ const TableList = () => {
         }
         // 新添加的评论 是否已经处理过 => 1 是 / 2 否
         if (flag === 2) {
-          return <Tag color='red'>否</Tag>;
+          return <Tag color='red' key={flag}>否</Tag>;
         }
-        return <Tag color='green'>是</Tag>;
+        return <Tag color='green' key={flag}>是</Tag>;
       },
     },
     {
       title: '观看/点赞/评论',
       width: 120,
+      key: 'meta',
+
       dataIndex: 'meta',
       render: val => (
-        <div>
-          <span>{val.views}</span> | <span>{val.likes}</span> | <span>{val.comments}</span>
+        <div key={3}>
+          <span>{val.views}</span> / <span>{val.likes}</span> / <span>{val.comments}</span>
         </div>
       ),
     },
     {
       title: '原创状态',
       dataIndex: 'origin',
+      key: 'origin',
       width: 50,
       render: val => {
         // 文章转载状态 => 0 原创，1 转载，2 混合
         if (val === 0) {
-          return <Tag color='green'>原创</Tag>;
+          return <Tag color='green' key={val}>原创</Tag>;
         }
         if (val === 1) {
-          return <Tag color='red'>转载</Tag>;
+          return <Tag color='red' key={val}>转载</Tag>;
         }
-        return <Tag>混合</Tag>;
+        return <Tag key={val}>混合</Tag>;
       },
     },
     {
       title: '创建时间',
       dataIndex: 'create_time',
       sorter: true,
-      valueType: "dateTime"
+      valueType: 'dateTime',
+      key: 'create_time',
+
     },
     {
       title: '操作',
+      key: 'option',
       render: (_, record) => [
-        <a
-          key='config'
-          onClick={() => {
-            handleUpdateModalVisible(true);
-            setCurrentRow(record);
-          }}
-        >
-          修改
-        </a>,
-        <a href='#'>
-          评论
-        </a>,
-        <a href='#'>
-          详情
-        </a>,
+        <Space key={1}>
+          <Button type='primary' size='small'
+                  onClick={() => history.push('/article/edit/' + record._id)}
+                  key={record.id}><EditOutlined key={record._id} /> 编辑</Button>
+
+          <Popconfirm title='确定要删除吗?' onConfirm={() => {
+            articleDel({ id: record._id });
+            actionRef.current.reload();
+          }}>
+            <Button type='dashed' size='small'> <DeleteOutlined /> 删除</Button>
+          </Popconfirm>
+        </Space>,
       ],
     },
+
   ];
   return (
     <PageContainer>
       <ProTable
         headerTitle='文章列表'
+        search={false}
         actionRef={actionRef}
-        rowKey='_id'
-        search={{
-          labelWidth: 120,
-        }}
         toolBarRender={() => [
           <Button
             type='primary'
             key='primary'
-            onClick={() => {
-              handleModalVisible(true);
-            }}
+            onClick={() => history.push('/article/form')}
           >
             <PlusOutlined /> 新建
           </Button>,
         ]}
+        rowKey='_id'
         request={getList}
         columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
       />
-
-      {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              已选择{' '}
-              <a
-                style={{
-                  fontWeight: 600,
-                }}
-              >
-                {selectedRowsState.length}
-              </a>{' '}
-              项 &nbsp;&nbsp;
-              <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo, 0)} 万
-              </span>
-            </div>
-          }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            批量删除
-          </Button>
-          <Button type='primary'>批量审批</Button>
-        </FooterToolbar>
-      )}
-      <ModalForm
-        title='新建规则'
-        width='400px'
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value);
-
-          if (success) {
-            handleModalVisible(false);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: '规则名称为必填项',
-            },
-          ]}
-          width='md'
-          name='name'
-        />
-        <ProFormTextArea width='md' name='desc' />
-      </ModalForm>
-      <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-
-          if (success) {
-            handleUpdateModalVisible(false);
-            setCurrentRow(undefined);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-        onCancel={() => {
-          handleUpdateModalVisible(false);
-          setCurrentRow(undefined);
-        }}
-        updateModalVisible={updateModalVisible}
-        values={currentRow || {}}
-      />
-
-      <Drawer
-        width={600}
-        visible={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {currentRow?.name && (
-          <ProDescriptions
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
-            }}
-            columns={columns}
-          />
-        )}
-      </Drawer>
     </PageContainer>
   );
 };
