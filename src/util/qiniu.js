@@ -1,5 +1,6 @@
 import { upload as uploadConfig } from '/config/qiniu';
-import * as qiniu from 'qiniu-js'
+import * as qiniu from 'qiniu-js';
+import { message } from 'antd';
 
 export const raundKey = () => {
   let timestamp = (new Date()).valueOf().toString();

@@ -103,7 +103,7 @@ const getCategory = async ({ keyword = '' }) => {
 };
 
 
-export class ArticleForm extends React.Component {
+class ArticleForm extends React.Component {
   aId = 0;
 
   constructor(props) {

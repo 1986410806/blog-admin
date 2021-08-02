@@ -371,33 +371,38 @@ export async function queryProject(params) {
   return request(`/api/getProjectList?${stringify(params)}`);
 }
 
-export async function addProject(params) {
+export async function addProject(params,options) {
   return request('/api/addProject', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     data: params,
+    ...options || {},
   });
 }
 
-export async function delProject(params) {
+export async function delProject(params,options) {
   return request('/api/delProject', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
     },
     data: params,
+    ...options || {},
+
   });
 }
 
-export async function updateProject(params) {
+export async function updateProject(params,options) {
   return request('/api/updateProject', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     data: params,
+    ...options || {},
+
   });
 }
 

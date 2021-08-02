@@ -1,11 +1,11 @@
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, message, Popconfirm } from 'antd';
+import { DeleteOutlined, PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, message, Popconfirm, Avatar, Tag } from 'antd';
 import React, { useState, useRef, Fragment } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import UpdateForm from './components/UpdateForm';
 
-import { queryProject,delProject } from '../../services/ant-design-pro/api';
+import { queryProject, delProject } from '../../services/ant-design-pro/api';
 
 
 const getList = async (params) => {
@@ -22,49 +22,7 @@ const getList = async (params) => {
   }
 };
 
-/**
- * 添加标签
- *
- * @param fields
- */
-const handleAdd = async (fields) => {
-  const hide = message.loading('正在添加');
 
-  try {
-    await addTag(fields);
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-/**
- * 更新节点
- *
- * @param fields
- */
-
-const handleUpdate = async (fields) => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
 /**
  * 删除
  *
@@ -98,7 +56,6 @@ const TableList = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState(false);
   const actionRef = useRef();
   const [currentRow, setCurrentRow] = useState();
-  const [selectedRowsState, setSelectedRows] = useState([]);
 
   /** 国际化配置 */
 
@@ -115,40 +72,42 @@ const TableList = () => {
     },
     {
       title: 'url',
-      width: 100,
+      width: 300,
       dataIndex: 'url',
     },
     {
       title: '封面图',
       width: 50,
       dataIndex: 'img',
-      render: val => <Avatar shape="square" src={val} size={40} icon="user" />,
+      render: val => <Avatar shape='square' src={val} size={40} icon='user' />,
     },
     {
       title: '状态',
       dataIndex: 'state', // 状态 1 是已经完成 ，2 是正在进行，3 是没完成
       render: val => {
-        // 状态 1 是已经完成 ，2 是正在进行，3 是没完成
-        if (val === 1) {
-          return <Tag color="green">已经完成</Tag>;
-        }
-        if (val === 2) {
-          return <Tag color="red">正在进行</Tag>;
-        }
-        return <Tag>没完成</Tag>;
+        const menu = {
+          1: '已完成',
+          2: '进行中',
+          3: '未完成',
+        };
+
+        console.log(val);
+        return <Tag color='green'>{
+          menu[val] ?menu[val]: "未完成"
+        }</Tag>;
       },
     },
     {
       title: '开始时间',
       dataIndex: 'start_time',
-      valueType: 'datetime',
+      valueType: 'date',
       sorter: true,
     },
     {
       title: '结束时间',
       dataIndex: 'end_time',
       sorter: true,
-      valueType: 'datetime',
+      valueType: 'date',
     },
     {
       title: '操作',
@@ -156,7 +115,10 @@ const TableList = () => {
       render: (text, record) => (
         <div>
           <Fragment>
-            <a onClick={() => this.showModal(record)}>修改</a>
+            <Button type='dashed' size='small' onClick={()=>{
+              setCurrentRow(record)
+              handleModalVisible(true)
+            }}><EditOutlined />修改</Button>
           </Fragment>
           <Popconfirm title='Sure to delete?' onConfirm={() => {
             handleRemove(text);
@@ -190,24 +152,14 @@ const TableList = () => {
         ]}
         request={getList}
         columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
       />
 
       <UpdateForm
         title='新增标签'
-        onSubmit={async (value) => {
-          const success = await handleAdd(value);
-
-          if (success) {
-            handleModalVisible(false);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+        onOK={async () => {
+          handleModalVisible(false);
+          if (actionRef.current) {
+            actionRef.current.reload();
           }
         }}
         onCancel={(b) => {
@@ -221,16 +173,10 @@ const TableList = () => {
 
       <UpdateForm
         title='编辑标签'
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-
-          if (success) {
-            handleUpdateModalVisible(false);
-            setCurrentRow(undefined);
-
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+        onOK={async () => {
+          handleModalVisible(false);
+          if (actionRef.current) {
+            actionRef.current.reload();
           }
         }}
         onCancel={() => {
