@@ -1,10 +1,10 @@
-import React, { Component, useRef } from 'react';
+import React from 'react';
 import {
   ProFormText,
   ProFormTextArea,
   ModalForm, ProFormUploadButton, ProFormSelect, ProFormDateRangePicker,
 } from '@ant-design/pro-form';
-import { getQiniuToken as getQiniuTokenService, addProject, updateProject } from '../../../services/ant-design-pro/api';
+import { getQiniuToken as getQiniuTokenService, addProject, updateProject,queryProject } from '../../../services/ant-design-pro/api';
 import { message } from 'antd';
 import { history } from 'umi';
 import { upload } from '../../../util/qiniu';
@@ -69,29 +69,31 @@ const ProjectUpdate = async (fields) => {
 };
 
 
-class UpdateForm extends React.Component {
+class ProjectUpdateForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {}
   };
 
-  formRef = useRef();
+  formRef = React.createRef();
 
-  componentDidMount() {
-    const props = this.props;
+  componentDidMount = () => {
+    // const props = this.props;
+    // queryProject().then(res => {
+    //   const data = res.data
+    //   this.formRef?.current?.setFieldsValue({
+    //     id: props.values?._id,
+    //     title: props.values?.title,
+    //     content: props.values?.content,
+    //     url: props.values?.url,
+    //     dateRange: [props.values?.start_time, props.values?.end_time],
+    //     img: props.values?.img ? [{ path: props.values?.img }] : [],
+    //     state: props.values?.state,
+    //
+    //   });
+    // })
+    // // 初始化表单参数
 
-    // 初始化表单参数
-    this.formRef?.current?.setFieldsValue({
-      id: props.values?._id,
-      title: props.values?.title,
-      content: props.values?.content,
-      url: props.values?.url,
-      dateRange: [props.values?.start_time, props.values?.end_time],
-      img: props.values?.img ? [{ path: props.values?.img }] : [],
-      state: props.values?.state,
-
-    });
   }
 
 
@@ -200,4 +202,4 @@ class UpdateForm extends React.Component {
   }
 }
 
-export default UpdateForm;
+export default ProjectUpdateForm;

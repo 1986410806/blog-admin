@@ -3,7 +3,7 @@ import { Button, message, Popconfirm, Avatar, Tag } from 'antd';
 import React, { useState, useRef, Fragment } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import UpdateForm from './components/UpdateForm';
+import ProjectUpdateForm from './components/UpdateForm';
 
 import { queryProject, delProject } from '../../services/ant-design-pro/api';
 
@@ -154,7 +154,7 @@ const TableList = () => {
         columns={columns}
       />
 
-      <UpdateForm
+      <ProjectUpdateForm
         title='新增标签'
         onOK={async () => {
           handleModalVisible(false);
@@ -171,7 +171,7 @@ const TableList = () => {
       />
 
 
-      <UpdateForm
+      <ProjectUpdateForm
         title='编辑标签'
         onOK={async () => {
           handleModalVisible(false);
