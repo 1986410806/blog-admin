@@ -1,4 +1,4 @@
-FROM node:alpine as builder
+FROM node:16-alpine3.14 as builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY . .
 
 RUN yarn run build
 
-FROM nginx:alpine
+FROM nginx:1.21-alpine
 
 WORKDIR /var/nginx/html
 COPY --from=builder /app/dist/ .
