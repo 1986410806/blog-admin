@@ -21,6 +21,7 @@ class FromMarkdown extends React.Component {
     const that = this;
     const vditor = new Vditor('vditor', {
       height: 1200,
+      cdn:"https://fastly.jsdelivr.net/npm/vditor@" + "3.8.7",
       mode: 'ir', // 及时渲染模式
       placeholder: 'MarkDown edit',
       toolbar: [
@@ -125,9 +126,10 @@ class FromMarkdown extends React.Component {
       },
 
     });
+    console.log(vditor)
     this.vditor = vditor;
     // 绑定當前對象
-    this.props.bindMarkDownThis(this);
+    this.props.bindMarkDownThis(that);
   };
 
 
@@ -153,7 +155,7 @@ class FromMarkdown extends React.Component {
   setMarkdownValue(val) {
     return this.vditor.setValue(val);
   }
-
+ 
   keypress(e) {
     e.stopPropagation();
   }

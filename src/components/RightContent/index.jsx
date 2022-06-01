@@ -56,7 +56,7 @@ const GlobalHeaderRight = () => {
       >
         <QuestionCircleOutlined />
       </span>
-      <NoticeIconView />
+      {/* <NoticeIconView /> */}
       <Avatar menu />
       <SelectLang className={styles.action} />
     </Space>
