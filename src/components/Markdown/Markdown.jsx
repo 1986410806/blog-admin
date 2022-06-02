@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Vditor from 'vditor';
-import 'vditor/src/assets/scss/index.scss';
+import "vditor/dist/index.css";
 import { upload } from '../../util/qiniu';
 import { getQiniuToken as getQiniuTokenService } from '../../services/ant-design-pro/api';
 

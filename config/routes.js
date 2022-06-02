@@ -20,31 +20,6 @@ export default [
   },
 
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    icon: 'icon-shuju1',
-    routes: [
-      {
-        name: 'analysis',
-        icon: 'smile',
-        path: '/dashboard/analysis',
-        component: './dashboard/analysis',
-      },
-      {
-        name: 'monitor',
-        icon: 'smile',
-        path: '/dashboard/monitor',
-        component: './dashboard/monitor',
-      },
-      {
-        name: 'workplace',
-        icon: 'smile',
-        path: '/dashboard/workplace',
-        component: './dashboard/workplace',
-      },
-    ],
-  },
-  {
     path: '/users',
     icon: 'UsergroupAdd',
     name: 'user-list',
@@ -83,38 +58,8 @@ export default [
       },
     ],
   },
-  {
-    name: 'result',
-    icon: 'CheckCircleOutlined',
-    path: '/result',
-    routes: [
-      {
-        name: 'success',
-        icon: 'smile',
-        path: '/result/success',
-        component: './result/success',
-      },
-      {
-        name: 'fail',
-        icon: 'smile',
-        path: '/result/fail',
-        component: './result/fail',
-      },
-    ],
-  },
-  // {
-  //   name: 'message',
-  //   icon: 'message',
-  //   path: '/result',
-  //   routes: [
-  //     {
-  //       name: 'success',
-  //       icon: 'smile',
-  //       path: '/result/success',
-  //       component: './result/success',
-  //     },
-  //   ]
-  // },
+  
+
   {
     path: '/project',
     name: 'project',
@@ -122,28 +67,8 @@ export default [
     component: './project',
   },
   {
-    name: 'account',
-    icon: 'user',
-    path: '/account',
-    routes: [
-      {
-        name: 'center',
-        icon: 'smile',
-        path: '/account/center',
-        component: './account/center',
-      },
-      {
-        name: 'settings',
-        icon: 'smile',
-        path: '/account/settings',
-        component: './account/settings',
-      },
-    ],
-  },
-
-  {
     path: '/',
-    redirect: '/dashboard/analysis',
+    redirect: '/article/list',
   },
   {
     component: '404',

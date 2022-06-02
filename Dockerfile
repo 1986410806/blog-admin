@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json /app
 
 RUN yarn config set registry https://registry.npm.taobao.org && \
-  yarn install --no-cache
+  yarn install 
 
 COPY . .
 
