@@ -1,4 +1,10 @@
 #! /bin/bash
 
-docker build -t zhaohuinan/blog-admin:1.1 .
-docker push zhaohuinan/blog-admin:1.1
+docker build -t zhaohuinan/blog-admin .
+
+if [ $? -eq 0 ];then
+
+    docker push zhaohuinan/blog-admin
+fi
+
+echo "success";

@@ -2,7 +2,7 @@ import { Button, Card, message } from 'antd';
 import ProForm, { ProFormSelect, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
 
 import { PageContainer } from '@ant-design/pro-layout';
-import { addArticle, queryTag, queryCategory, getArticleDetail, updateArticle } from '@/services/ant-design-pro/api';
+import { addArticle, queryTag, queryCategory, getArticleDetail, updateArticle, addTag } from '@/services/ant-design-pro/api';
 import { history } from 'umi';
 import { getQiniuToken as getQiniuTokenService } from '../../../services/ant-design-pro/api';
 import { upload } from '@/util/qiniu';
@@ -72,20 +72,6 @@ const getArticle = async (id) => {
   }
 };
 
-const getTags = async ({ keyword = '' }) => {
-  try {
-    const tags = await queryTag({ pageNum: 1, pageSize: 300, keyword: keyword });
-    return tags.data.list.map((item) => {
-      return {
-        label: item.name, value: item._id,
-      };
-    });
-  } catch (error) {
-    console.error(error);
-    message.error('标签加载失败！');
-    return false;
-  }
-};
 
 const getCategory = async ({ keyword = '' }) => {
   try {
@@ -105,7 +91,9 @@ const getCategory = async ({ keyword = '' }) => {
 
 class ArticleForm extends React.Component {
   aId = 0;
-
+  keyCode = 0
+  formRef = React.createRef();
+  qiniuToken;
   constructor(props) {
     super(props);
     // 存在参数为编辑
@@ -114,9 +102,42 @@ class ArticleForm extends React.Component {
     }
   };
 
-  formRef = React.createRef();
 
-  qiniuToken;
+
+  getTags = async ({ keyWords = "" }) => {
+    try {
+      const tags = await queryTag({ pageNum: 1, pageSize: 300, keyword: keyWords });
+      if (tags.data.list.length == 0 && (this.keyCode == 13 || this.keyCode == 32)) {
+        // 搜索不到 并且使用了空格 回车
+        try {
+          const res = await addTag({ name: keyWords, desc: keyWords });
+          return [{
+            label: res.data.name,
+            value: res.data._id,
+          }]
+
+        } catch (error) {
+          console.error(error);
+          message.error('添加失败请重试!');
+          return false;
+        }
+      }
+
+      return tags.data.list.map((item) => {
+        return {
+          label: item.name, value: item._id,
+        };
+      });
+    } catch (error) {
+      console.error(error);
+      message.error('标签加载失败！');
+      return false;
+    }
+  };
+
+  keydown = async (e) => {
+    this.keyCode = e.keyCode
+  }
 
   getQiniuToken = async () => {
     console.log(1231)
@@ -137,7 +158,7 @@ class ArticleForm extends React.Component {
           author: res.data.author,
           desc: res.data.desc,
           img_url: [{
-            url:res.data.img_url,
+            url: res.data.img_url,
           }],
           origin: res.data.origin,
           keyword: res.data.keyword.join(','),
@@ -158,7 +179,7 @@ class ArticleForm extends React.Component {
   setImgUrl = (path) => {
     this.formRef?.current?.setFieldsValue({
       img_url: [{
-        "url":path
+        "url": path
       }],
     });
   };
@@ -185,7 +206,7 @@ class ArticleForm extends React.Component {
       }
       values.content = this.getContent();
 
-      if(values.img_url.length < 1){
+      if (values.img_url.length < 1) {
         message.error('请上传封面图~~');
         return false;
       }
@@ -196,22 +217,22 @@ class ArticleForm extends React.Component {
     };
 
     return (<PageContainer waterMarkProps={
-        { content: '王富贵' }
-      }>
-        <Card bordered={false}>
-          <ProForm
-            hideRequiredMark
-            style={{
-              marginTop: 8,
-            }}
-            layout='vertical'
-            formRef={this.formRef}
-            onFinish={submit}
+      { content: '王富贵' }
+    }>
+      <Card bordered={false}>
+        <ProForm
+          hideRequiredMark
+          style={{
+            marginTop: 8,
+          }}
+          layout='vertical'
+          formRef={this.formRef}
+          onFinish={submit}
 
-          >
+        >
 
-            {/* 判断时候更新*/}
-            {this.aId !== 0 &&
+          {/* 判断时候更新*/}
+          {this.aId !== 0 &&
             <ProFormText
               width='md'
               label='ID'
@@ -220,162 +241,165 @@ class ArticleForm extends React.Component {
               fieldProps={{ onkeydown: (e) => e.preventDefault(e) }}
 
             />
-            }
+          }
 
 
-            <ProFormText
-              width='md'
-              label='标题'
-              name='title'
-              rules={[
-                {
-                  required: true,
-                  message: '请输入标题',
-                },
-              ]}
-              placeholder='文章标题'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
-            />
+          <ProFormText
+            width='md'
+            label='标题'
+            name='title'
+            rules={[
+              {
+                required: true,
+                message: '请输入标题',
+              },
+            ]}
+            placeholder='文章标题'
+            fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+          />
 
-            <ProForm.Item label='正文'>
-              <Markdown
-                bindMarkDownThis={this.bindMarkDownThis}
-                getQiniuToken={this.getQiniuToken}
-                value={this.props.values?.content || ''} />
-            </ProForm.Item>
+          <ProForm.Item label='正文'>
+            <Markdown
+              bindMarkDownThis={this.bindMarkDownThis}
+              getQiniuToken={this.getQiniuToken}
+              value={this.props.values?.content || ''} />
+          </ProForm.Item>
 
-            <ProFormUploadButton
-              label='封面图'
-              name="img_url"
-              max={1}
-              fieldProps={{
-                width:"lg",
-                listType: 'picture-card',
-              }}
-              action={async (file) => {
-                const token = await this.getQiniuToken();
-                upload(file, token, this.setImgUrl);
-              }}
-              rules={[
-                  {
-                    required: true,
-                    message: '请上传封面图',
-                  },
-                ]}
-            />
-
-
-            <ProFormText
-              width='md'
-              label='作者'
-              name='author'
-              rules={[
-                {
-                  required: true,
-                  message: '请输入作者',
-                },
-              ]}
-              placeholder='作者名字'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
-
-            />
-            <ProFormText
-              width='md'
-              label='关键字'
-              name='keyword'
-              rules={[
-                {
-                  required: true,
-                  message: '关键字不能为空',
-                },
-              ]}
-              placeholder='关键字（seo检索）'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
-
-            />
-            <ProFormText
-              width='md'
-              label='描述'
-              name='desc'
-              rules={[
-                {
-                  required: true,
-                  message: '关键字不能为空',
-                },
-              ]}
-              placeholder='关键字（seo检索）'
-              fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
-            />
+          <ProFormUploadButton
+            label='封面图'
+            name="img_url"
+            max={1}
+            fieldProps={{
+              width: "lg",
+              listType: 'picture-card',
+            }}
+            action={async (file) => {
+              const token = await this.getQiniuToken();
+              upload(file, token, this.setImgUrl);
+            }}
+            rules={[
+              {
+                required: true,
+                message: '请上传封面图',
+              },
+            ]}
+          />
 
 
-            <ProFormSelect
-              name='state'
-              label='发布状态'
-              options={[
-                { value: 0, label: '草稿' },
-                { value: 1, label: '发布' },
-              ]}
-              placeholder='选择发布状态'
-              rules={[{ required: true, message: '请选择发布状态' }]}
-            />
+          <ProFormText
+            width='md'
+            label='作者'
+            name='author'
+            rules={[
+              {
+                required: true,
+                message: '请输入作者',
+              },
+            ]}
+            placeholder='作者名字'
+            fieldProps={{
+              onPressEnter: (e) => e.preventDefault(e),
+              defaultValue: "hello"
+            }}
 
-            <ProFormSelect
-              name='type'
-              label='文章类型'
-              options={[
-                {
-                  label: '普通文章', value: 1,
-                },
-                {
-                  label: '简历', value: 2,
-                },
-                {
-                  label: '管理员介绍', value: 3,
-                },
+          />
+          <ProFormText
+            width='md'
+            label='关键字'
+            name='keyword'
+            placeholder='关键字（seo检索）'
+            fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
 
-              ]}
-              placeholder='请选择发布状态'
-              rules={[{ required: true, message: '请选择发布状态' }]}
-            />
-
-            <ProFormSelect
-              name='origin'
-              label='文章类型'
-              options={[
-                { label: '原创', value: 0 },
-                { label: '转载', value: 1 },
-                { label: '混合', value: 2 },
-              ]}
-              placeholder='选择文章转载状态'
-              rules={[{ required: true, message: '选择文章转载状态' }]}
-            />
-
-            <ProFormSelect.SearchSelect
-              name='tags'
-              label='标签选项'
-              fieldProps={{
-                labelInValue: false,
-              }}
-
-              request={getTags}
-
-              rules={[{ required: true, message: '请选择标签' }]}
-            />
-
-            <ProFormSelect.SearchSelect
-              name='category'
-              label='文章分类'
-              fieldProps={{
-                labelInValue: false,
-              }}
-              request={getCategory}
-              rules={[{ required: true, message: '请选择文章分类' }]}
-            />
-          </ProForm>
-        </Card>
+          />
+          <ProFormText
+            width='md'
+            label='描述'
+            name='desc'
+            placeholder='关键字（seo检索）'
+            fieldProps={{ onPressEnter: (e) => e.preventDefault(e) }}
+          />
 
 
-      </PageContainer>
+          <ProFormSelect
+            name='state'
+            label='发布状态'
+            fieldProps={{
+              defaultValue: 0
+            }}
+            options={[
+              { value: 0, label: '草稿' },
+              { value: 1, label: '发布' },
+            ]}
+            placeholder='选择发布状态'
+            rules={[{ required: true, message: '请选择发布状态' }]}
+          />
+
+          <ProFormSelect
+            name='type'
+            label='文章类型'
+            fieldProps={{
+              defaultValue: 1
+            }}
+            options={[
+              {
+                label: '普通文章', value: 1,
+              },
+              {
+                label: '简历', value: 2,
+              },
+              {
+                label: '管理员介绍', value: 3,
+              },
+
+            ]}
+            placeholder='请选择发布状态'
+            rules={[{ required: true, message: '请选择发布状态' }]}
+          />
+
+          <ProFormSelect
+            name='origin'
+            label='文章类型'
+            fieldProps={{
+              defaultValue: 0
+            }}
+
+            options={[
+              { label: '原创', value: 0 },
+              { label: '转载', value: 1 },
+              { label: '混合', value: 2 },
+            ]}
+            placeholder='选择文章转载状态'
+            rules={[{ required: true, message: '选择文章转载状态' }]}
+          />
+
+          <ProFormSelect.SearchSelect
+            name='tags'
+
+            label='标签选项'
+            fieldProps={{
+              labelInValue: false,
+              onInputKeyDown: this.keydown
+            }}
+
+            request={this.getTags}
+
+            rules={[{ required: true, message: '请选择标签' }]}
+          />
+
+          <ProFormSelect.SearchSelect
+            name='category'
+            label='文章分类'
+            fieldProps={{
+              labelInValue: false,
+            }}
+            request={getCategory}
+            rules={[{ required: true, message: '请选择文章分类' }]}
+          />
+        </ProForm>
+      </Card>
+
+
+    </PageContainer>
     );
   }
 }

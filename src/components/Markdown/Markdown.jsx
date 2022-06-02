@@ -126,7 +126,6 @@ class FromMarkdown extends React.Component {
       },
 
     });
-    console.log(vditor)
     this.vditor = vditor;
     // 绑定當前對象
     this.props.bindMarkDownThis(that);

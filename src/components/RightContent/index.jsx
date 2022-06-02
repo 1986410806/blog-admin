@@ -44,9 +44,7 @@ const GlobalHeaderRight = () => {
             label: <a href="https://prolayout.ant.design/">Pro Layout</a>,
             value: 'Pro Layout',
           },
-        ]} // onSearch={value => {
-        //   console.log('input', value);
-        // }}
+        ]}
       />
       <span
         className={styles.action}
