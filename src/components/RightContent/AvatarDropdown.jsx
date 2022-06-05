@@ -5,7 +5,7 @@ import { history, useModel } from 'umi';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-import { outLogin } from '@/services/ant-design-pro/api';
+import { outLogin } from '@/services/ant-design-pro/login';
 
 /**
  * 退出登录，并且将当前的 url 保存
@@ -79,7 +79,7 @@ const AvatarDropdown = ({ menu }) => {
       )}
       {menu && <Menu.Divider />}
 
-      <Menu.Item key="logout">
+      <Menu.Item key="logout" onClick={() => { localStorage.removeItem("token") }}>
         <LogoutOutlined />
         退出登录
       </Menu.Item>

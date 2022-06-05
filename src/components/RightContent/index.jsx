@@ -9,7 +9,6 @@ import NoticeIconView from '../NoticeIcon';
 
 const GlobalHeaderRight = () => {
   const { initialState } = useModel('@@initialState');
-
   if (!initialState || !initialState.settings) {
     return null;
   }

@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { login } from '@/services/ant-design-pro/api';
+import { login } from '@/services/ant-design-pro/login';
 import styles from './index.less';
 
 const LoginMessage = ({ content }) => (
@@ -28,7 +28,9 @@ const goto = () => {
   setTimeout(() => {
     const { query } = history.location;
     const { redirect } = query;
-    history.push(redirect || '/');
+
+    history.push('/');
+    console.log(234)
   }, 10);
 };
 
@@ -40,8 +42,7 @@ const Login = () => {
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
-
-    if (userInfo) {
+    if (!userInfo) {
       setInitialState({ ...initialState, currentUser: userInfo });
     }
   };
@@ -51,14 +52,17 @@ const Login = () => {
 
     try {
       // 登录
-      const msg = await login({ ...values });
+      const msg = await login({ ...values,type:1 });
       if (msg.code === 0) {
+        // 先将 token 加入全局
+        localStorage.setItem("token",msg.data.token)
+
         const defaultloginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultloginSuccessMessage);
-        await fetchUserInfo();
+        await fetchUserInfo()
         goto();
         return;
       } // 如果失败去设置用户错误信息
@@ -194,7 +198,6 @@ const Login = () => {
                   float: 'right',
                 }}
               >
-                {/* <FormattedMessage id='pages.login.forgotPassword' defaultMessage='忘记密码' /> */}
               </a>
             </div>
           </ProForm>

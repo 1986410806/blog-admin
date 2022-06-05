@@ -6,34 +6,7 @@ import { stringify } from 'qs';
 
 /** 获取当前的用户 GET /api/currentUser */
 
-export async function currentUser(options) {
-  return request('/api/currentUser', {
-    method: 'GET',
-    ...(options || {}),
-  });
-}
 
-/** 退出登录接口 POST /api/login/outLogin */
-
-export async function outLogin(options) {
-  return request('/api/logout', {
-    method: 'POST',
-    ...(options || {}),
-  });
-}
-
-/** 登录接口 POST /api/login/account */
-
-export async function login(data, options) {
-  return request('/api/loginAdmin', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: data,
-    ...(options || {}),
-  });
-}
 
 /** 此处后端没有提供注释 GET /api/notices */
 
@@ -494,37 +467,11 @@ export async function updateFakeList(params) {
   });
 }
 
-export async function loginAdmin(params) {
-  return request('/api/loginAdmin', {
-    method: 'POST',
-    data: params,
-  });
-}
-
-export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
-    method: 'POST',
-    data: params,
-  });
-}
-
-export async function fakeRegister(params) {
-  return request('/api/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: params,
-  });
-}
 
 export async function queryNotices() {
   return request('/api/notices');
 }
 
-export async function getFakeCaptcha(mobile) {
-  return request(`/api/captcha?mobile=${mobile}`);
-}
 
 export async function getQiniuToken() {
   return request(`/api/qiniu/getToken`, {

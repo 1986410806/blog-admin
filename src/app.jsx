@@ -1,9 +1,9 @@
 import { PageLoading } from '@ant-design/pro-layout';
 import { notification } from 'antd';
-import { history, Link } from 'umi';
+import { history, useModel } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import { current as queryCurrentUser } from './services/ant-design-pro/login';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -22,9 +22,7 @@ export async function getInitialState() {
   const fetchUserInfo = async () => {
     try {
       const currentUser = await queryCurrentUser();
-      if (currentUser.code == 1) {
-        history.push(loginPath);
-      }
+
       return currentUser.data;
     } catch (error) {
       history.push(loginPath);
@@ -87,10 +85,25 @@ export async function getInitialState() {
  * @see https://beta-pro.ant.design/docs/request-cn
  */
 
+ const authHeaderInterceptor = (url, options) => {
+
+
+  let token = localStorage.getItem("token")
+  const authHeader = { Authorization: `Bearer ${token}` };
+  
+  return {
+    url: url,
+    options: { ...options, interceptors: true, headers: authHeader },
+  };
+};
+
+
 export const request = {
+  
+
   errorHandler: (error) => {
     const { response } = error;
-
+    console.log(error)
     if (!response) {
       notification.error({
         description: '您的网络发生异常，无法连接服务器',
@@ -98,9 +111,27 @@ export const request = {
       });
     }
 
+    
+
+    if (response.status == 403) { // 未登录
+      notification.error({
+        description: '登录已过期，请重新登录~',
+        message: '授权错误',
+      });
+      history.push(loginPath);
+    } else if (response.status >= 500) { // 未登录
+      notification.error({
+        description: '您的网络发生异常，无法连接服务器',
+        message: '网络异常',
+      });
+    }
     throw error;
   },
-}; // ProLayout 支持的api https://procomponents.ant.design/components/layout
+  // 新增自动添加AccessToken的请求前拦截器
+  requestInterceptors: [authHeaderInterceptor],
+}; 
+
+// ProLayout 支持的api https://procomponents.ant.design/components/layout
 
 export const layout = ({ initialState }) => {
   return {
